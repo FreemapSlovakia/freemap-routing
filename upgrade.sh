@@ -7,8 +7,8 @@ if [ 0 -eq 1 ]; then
 	unzip -q v$version.zip
 	mv osrm-backend-$version osrm-backend
 else
-	#wget -O https://github.com/Project-OSRM/osrm-backend/archive/master.zip
-	wget -O master.zip https://github.com/Project-OSRM/osrm-backend/archive/fix/segment-end-points.zip
+	wget -O https://github.com/Project-OSRM/osrm-backend/archive/master.zip
+	#wget -O master.zip https://github.com/Project-OSRM/osrm-backend/archive/fix/segment-end-points.zip # if you need a branch
 	rm -r tmp/; mkdir tmp; unzip -q master.zip -d tmp/
 	mv tmp/* osrm-backend
 fi 
