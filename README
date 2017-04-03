@@ -1,8 +1,0 @@
-# build OSRM
-download your region from server, like http://download.geofabrik.de
-run addfmreltags.pl, this will add special tags to ways, which are a part of relation (OSRM cannot handle relations at the moment)
-
-# keep osrm in a loop like
-while :; do osrm-routed /home/zaloha/db/tmp/osrm/bigslovakia-fmrel.osrm ; done 
-
-
