@@ -11,5 +11,18 @@ To use at your website, have a look at https://github.com/perliedman/leaflet-rou
 
 ## build
 - adapt `do.sh` to download your region from server, like http://download.geofabrik.de
+- change directories in `do.sh`
 
+# Features
 
+## common features
+- all standard features done by OSRM plus
+- take elevation into account (uphill is slower than downhill; uphill is avoided if possible)
+- route over highways that are relations only
+- preference of hiking/cycle routes: prefer ways that are a part of relations
+
+## foot profile features
+- avoid footways close to major roads (this makes generation of graf data very slow)
+- avoid ways in industrial areas
+- prefer ways in forrest
+- prefer ways close to touristic attractions
