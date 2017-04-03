@@ -1,0 +1,19 @@
+# OsmType  Tag          DataType     Flags
+#node,way   note         text         delete   # These tags can be long but are useless for rendering
+
+node,way   amenity      text         nocache,polygon
+node,way   area         text         # hard coded support for area=1/yes => polygon is in osm2pgsql
+node,way   highway      text         linear
+node,way	tunnel		text		linear
+node,way   historic     text         polygon
+node,way   landuse      text         polygon
+node,way   leisure      text         polygon
+node,way   name         text         linear
+node,way   natural      text         polygon 
+node,way   route        text         linear
+node,way   tourism      text         polygon
+node	waterway	text		polygon
+way	colour	text	linear
+#node,way   z_order      int4         linear # This is calculated during import
+#way        way_area     real                # This is calculated during import
+

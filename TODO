@@ -1,0 +1,16 @@
+
+https://github.com/Project-OSRM/osrm-backend/blob/master/profiles/examples/postgis.lua
+
+segment function
+pripoji sa na postgis
+zisti prevysenie (getz(prvy) - getz(posledny))
+zisti ci krizuje api_cesty
+?zisti ci je blizko obcerstvenie
+vrati parameter pre rate (?a rychlost)
+
+prenasobit
+
+select name, tags->'incline' from fresh_osm_line where exist(tags,'incline') order by tags->'incline';
+
+testing of good routes?
+

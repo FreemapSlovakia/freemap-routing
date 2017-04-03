@@ -1,0 +1,4 @@
+#!/bin/bash
+while :; do osrm-routed -p 5001 /home/zaloha/db/tmp/osrm/bratislava.osrm > /dev/null; done &
+while :; do osrm-routed -p 5000 /home/zaloha/db/tmp/osrm/bigslovakia-fmrel.osrm > /dev/null ; done  &
+

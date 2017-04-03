@@ -1,0 +1,6 @@
+#!/bin/bash
+cd /home/vseobecne/projekty/osm/oma/odberatelia/routing/daemon-scripts
+cp -p osrm-daemon /usr/local/bin/
+cp -p osrm-daemon.sh /etc/init.d/
+update-rc.d osrm-daemon.sh defaults
+touch /var/log/osrm_daemon.log; chown michal /var/log/osrm_daemon.log
