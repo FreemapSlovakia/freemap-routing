@@ -16,7 +16,7 @@ To use at your website, have a look at https://github.com/perliedman/leaflet-rou
 # Features
 
 ## common features
-- all standard features done by OSRM plus
+- all standard features done by OSRM plus:
 - take elevation into account (uphill is slower than downhill; uphill is avoided if possible)
 - route over highways that are relations only
 - preference of hiking/cycle routes: prefer ways that are a part of relations
