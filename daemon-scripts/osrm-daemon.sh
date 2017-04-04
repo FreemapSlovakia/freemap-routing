@@ -60,7 +60,7 @@ case "$1" in
     uninstall
     ;;
   reload)
-	killall osmr-routed
+	killall osrm-routed
 	;;
   retart)
     stop
