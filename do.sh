@@ -20,16 +20,17 @@ cd $SCRIPTPATH
 
 
 cp *lua $osrmdir
-out="$out\nstarting to download: `date`"
+out="$out
+starting to download: `date`"
 d=`date --date="today" +"%g%m%d"`
-#scp -p -P 21122 92.240.244.41:/freemap/datastore.fm/httpd/dev/tmp/osmosis/planet/bigslovakia$d.pbf $datadir/bigslovakia.pbf
+scp -p -P 21122 92.240.244.41:/freemap/datastore.fm/httpd/dev/tmp/osmosis/planet/bigslovakia$d.pbf $datadir/bigslovakia.pbf
 
-out="$out\nimport into postgis: `date`"
-#osm2pgsql --create --slim --latlong --style osrm.style --database $dbname --prefix "osrm_osm" $datadir/bigslovakia.pbf > /dev/null 2>&1
+out="$out
+import into postgis: `date`"
+osm2pgsql --create --slim --latlong --style osrm.style --database $dbname --prefix "osrm_osm" $datadir/bigslovakia.pbf > /dev/null 2>&1
 
 echo "SELECT 'vacuum analyze ' || table_name ||';' FROM information_schema.tables WHERE table_name like '$prefix_%' limit 20" | psql -t $dbname| psql -q $dbname
 
-out="$out\ncreate postgis tables: `date`"
 # highways that are defined only by relation tags
 echo "select 'route_ways={' || string_agg(distinct concat('[', parts::text, ']=\"', highway, '\"' ), ', ') || '};' from (select highway,unnest(parts) as parts from (select osm_id, highway from ${prefix}_polygon where highway is not null union select osm_id, highway from ${prefix}_line where highway is not null) as f,${prefix}_rels where osm_id*-1 = id and osm_id < 0) as t;" | psql -t $dbname > $osrmdir/route_rels.lua
 # bike routes to avoid addfmreltags
@@ -43,13 +44,15 @@ osmosis --read-pbf file="$datadir/bigslovakia.pbf" --bounding-box bottom=47.96 l
 f="bigslovakia"
 cd $osrmdir
 echo "FOOT routing"
-out="$out\nfoot profile: `date`"
-f="bratislava";
+#f="bratislava";
+out="$out
+\nfoot profile $f: `date`"
 rm $datadir/$f.osrm*
 osrm-extract -p oma-foot.lua $datadir/$f.pbf && osrm-contract $datadir/$f.osrm && mv $datadir/$f.osrm* $datadir/osrm && killall osrm-routed
 
 echo "BICYCLE routing"
-out="$out\nbicycle profile: `date`"
+out="$out
+bicycle profile $f: `date`"
 
 f="bigslovakia"
 rm $datadir/$f.osrm*
@@ -68,5 +71,6 @@ killall osrm-routed
 
 
 #killall osrm-routed
-out="$out\nend: `date`"
+out="$out
+end: `date`"
 echo $out
