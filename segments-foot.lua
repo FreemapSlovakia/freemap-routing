@@ -38,7 +38,7 @@ function segment_function (segment)
 	-- prefer footways in forrest/park/..., todo: avoid ways in industrial areas.
 	if row and row.in_park then
 		if tonumber(row.in_park) > 0 then segment.weight = segment.weight / (1+tonumber(row.in_park)) end
-        if tonumber(row.in_park) < 0 then segment.weight = segment.weight / (1+math.abs(tonumber(row.in_park))) end
+        if tonumber(row.in_park) < 0 then segment.weight = segment.weight * (1+math.abs(tonumber(row.in_park))) end
 	end
 	--print("nove:    " .. segment.distance .. " " .. segment.weight .. " " ..segment.duration)
 	cursor:close();
