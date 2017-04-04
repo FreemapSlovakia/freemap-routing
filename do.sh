@@ -15,15 +15,12 @@ osrmdir='/home/vseobecne/ine/osrmv5'
 
 
 cp *lua $osrmdir
-#cp tmp/*lua /home/vseobecne/ine/osrmv5
-#cp *pl /home/vseobecne/ine/osrmv5
 out="$out\nstarting to download: `date`"
 d=`date --date="today" +"%g%m%d"`
-#scp -p -P 21122 92.240.244.41:/freemap/datastore.fm/httpd/dev/tmp/osmosis/planet/bigslovakia$d.pbf $datadir/bigslovakia.pbf
-##wget -q -O addfmreltags.pl https://github.com/FreemapSlovakia/MapsforgeFreemapHikingStyle/raw/master/generator/addfmreltags.pl
+scp -p -P 21122 92.240.244.41:/freemap/datastore.fm/httpd/dev/tmp/osmosis/planet/bigslovakia$d.pbf $datadir/bigslovakia.pbf
 
 out="$out\nimport into postgis: `date`"
-#osm2pgsql --create --slim --latlong --style osrm.style --database $dbname --prefix "osrm_osm" --multi-geometry $datadir/bigslovakia.pbf > /dev/null 2>&1
+osm2pgsql --create --slim --latlong --style osrm.style --database $dbname --prefix "osrm_osm" --multi-geometry $datadir/bigslovakia.pbf > /dev/null 2>&1
 
 echo "SELECT 'vacuum analyze ' || table_name ||';' FROM information_schema.tables WHERE table_name like '$prefix_%' limit 20" | psql -t $dbname| psql -q $dbname
 
@@ -34,13 +31,9 @@ echo "select 'route_ways={' || string_agg(distinct concat('[', parts::text, ']=\
 echo "select 'bicycle_ways={' || string_agg(distinct concat('[', parts::text, ']=\"', name, '\"' ), ', ') || '};' from ( select first(name order by dlzka desc) as name, parts from (select name,unnest(parts) as parts, dlzka from (select osm_id, replace(name, '\"', '') as name, round(st_length(way::geography)) as dlzka from ${prefix}_line where route in ('bicycle','mtb' )) as f,${prefix}_rels where osm_id*-1 = id and osm_id < 0) as t group by parts) as tt ;" | psql -t $dbname >> $osrmdir/route_rels.lua
 echo "select 'foot_ways={' || string_agg(distinct concat('[', parts::text, ']=\"', colour, '\"' ), ', ') || '};' from ( select first(colour order by col2 asc) as colour, parts from (select unnest(parts) as parts, case when colour is not null then colour else 'other' end as colour, col2 from (select osm_id, colour,  case when colour='red' then 1 when colour = 'blue' then 2 when colour='green' then 3 else 4 end as col2 from ${prefix}_line where route in ('hiking','foot' )) as f,${prefix}_rels where osm_id*-1 = id and osm_id < 0) as t group by parts) as tt ;" | psql -t $dbname >> $osrmdir/route_rels.lua
 
-cat main-roads.sql | psql -q $dbname
+# cat main-roads.sql | psql -q $dbname # hopefully obsolete
 
 osmosis --read-pbf file="$datadir/bigslovakia.pbf" --bounding-box bottom=47.96 left=16.9 top=48.3 right=17.33 --write-pbf file="$datadir/bratislava.pbf"
-
-#perl addfmreltags.pl $datadir/bigslovakia.pbf > /dev/null
-#rm addfmreltags.log
-#mv $datadir/bigslovakia.pbf-fmrel.pbf $datadir/$f.pbf
 
 f="bigslovakia"
 cd $osrmdir
@@ -53,7 +46,7 @@ osrm-extract -p oma-foot.lua $datadir/$f.pbf && osrm-contract $datadir/$f.osrm &
 echo "BICYCLE routing"
 out="$out\nbicycle profile: `date`"
 
-f="bigslovakia-fmrel"
+f="bigslovakia"
 rm $datadir/$f.osrm*
 osrm-extract -p oma-bicycle.lua $datadir/$f.pbf && osrm-contract $datadir/$f.osrm && mv $datadir/$f.osrm* $datadir/bicycle-osrm/
 killall osrm-routed
