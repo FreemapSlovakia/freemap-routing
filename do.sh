@@ -1,12 +1,17 @@
 #!/bin/sh
-date
-out="starting: `date`"
-cd /home/vseobecne/projekty/osm/oma/odberatelia/routing
 # prefix used by osm2pgsql --slim
 dbname='mapnik';
 prefix='osrm_osm';
 datadir='/home/zaloha/db/tmp'
 osrmdir='/home/vseobecne/ine/osrmv5'
+
+date
+out="starting: `date`"
+
+SCRIPT=$(readlink -f "$0")
+# Absolute path this script is in, thus /home/user/bin
+SCRIPTPATH=$(dirname "$SCRIPT")
+cd $SCRIPTPATH
 
 # todo: preferuj cervenu pred modrou
 #echo "select 'bicycle_ways={' || string_agg(distinct concat('[', parts::text, ']=\"', name, '\"' ), ', ') || '};' from ( select first(name order by dlzka desc) as name, parts from (select name,unnest(parts) as parts, dlzka from (select osm_id, replace(name, '\"', '') as name, round(st_length(way)) as dlzka from trasy where typ='cyklotrasa' ) as f,${prefix}rels where osm_id*-1 = id and osm_id < 0) as t group by parts) as tt ;" | psql -t mapnik > tmp/route_bicycle.lua
@@ -17,10 +22,10 @@ osrmdir='/home/vseobecne/ine/osrmv5'
 cp *lua $osrmdir
 out="$out\nstarting to download: `date`"
 d=`date --date="today" +"%g%m%d"`
-scp -p -P 21122 92.240.244.41:/freemap/datastore.fm/httpd/dev/tmp/osmosis/planet/bigslovakia$d.pbf $datadir/bigslovakia.pbf
+#scp -p -P 21122 92.240.244.41:/freemap/datastore.fm/httpd/dev/tmp/osmosis/planet/bigslovakia$d.pbf $datadir/bigslovakia.pbf
 
 out="$out\nimport into postgis: `date`"
-osm2pgsql --create --slim --latlong --style osrm.style --database $dbname --prefix "osrm_osm" --multi-geometry $datadir/bigslovakia.pbf > /dev/null 2>&1
+#osm2pgsql --create --slim --latlong --style osrm.style --database $dbname --prefix "osrm_osm" $datadir/bigslovakia.pbf > /dev/null 2>&1
 
 echo "SELECT 'vacuum analyze ' || table_name ||';' FROM information_schema.tables WHERE table_name like '$prefix_%' limit 20" | psql -t $dbname| psql -q $dbname
 
