@@ -3,7 +3,6 @@ lua_sql = require "luasql.postgres"           -- we will connect to a postgresql
 sql_env = assert( lua_sql.postgres() )
 sql_con = assert( sql_env:connect("mapnik") ) -- you can add db user/password here if needed
 print("PostGIS connection opened")
---
 
 function segment_function (segment)
 	local line = "st_makeline(ST_SetSRID(st_makepoint(" .. segment.source.lon .. "," .. segment.source.lat .. "), 4326), ST_SetSRID(st_makepoint(" .. segment.target.lon .. "," .. segment.target.lat .. "), 4326))";
@@ -11,7 +10,7 @@ function segment_function (segment)
 		.. ", getz(ST_SetSRID(st_makepoint(" .. segment.target.lon .. "," .. segment.target.lat .. "), 4326)::geography) as ele_last" 
 		.. ", (select count(*) from poi where st_dwithin(".. line .." ::geography, way, 50) and kategoria(typy, 'priroda')) as number_poi"
 	--	.. ", (select sum(0.5*par*st_length(st_intersection(" .. line ..", way)::geography))/(0.01+ st_length("..line.."::geography)) from osrm_major where st_dwithin("..line..", way, 0)) as pri_hlavnej"
-		.. ", (select sum(2*st_length(st_intersection(geometry(st_buffer(geography("..line.."), 15)), way)::geography))/(0.01+ st_length("..line.."::geography)) from osrm_osm_line where st_dwithin("..line..", way, 0.005) and highway in ('motorway','motorway_link','trunk','trunk_link','primary','primary_link','secondary','secondary_link', 'tertiary','tertiary_link') ) as next_to_major"
+		.. ", (select sum(2*st_length(st_intersection(geometry(st_buffer(geography("..line.."), 15)), way)::geography))/(0.01+ st_length("..line.."::geography)) from osrm_osm_line where st_dwithin("..line..", way, 0.005) and highway in ('motorway','motorway_link','trunk','trunk_link','primary','primary_link','secondary','secondary_link', 'tertiary','tertiary_link') and tunnel is null ) as next_to_major"
 		.. ", (select sum(st_length(st_intersection("..line..", way)::geography))/(0.01+ st_length("..line.."::geography)) from osrm_osm_polygon where st_dwithin("..line..", way, 0.005) and (landuse in ('forest', 'vineyard', 'orchard') or \"natural\" in ('wood') or leisure in ('park') ) ) as in_park"
 	local cursor = assert( sql_con:execute(sql_query) )   -- execute querty
 	local row = cursor:fetch( {}, "a" )                   -- fetch first (and only) row
@@ -36,7 +35,7 @@ function segment_function (segment)
 	if row and row.next_to_major then 
 		if tonumber(row.next_to_major) > 0 then segment.weight = segment.weight * (1+tonumber(row.next_to_major)) end
 	end
-	-- prefer footways in forrest/park/..., avoid ways in industrial areas.
+	-- prefer footways in forrest/park/..., todo: avoid ways in industrial areas.
 	if row and row.in_park then
 		if tonumber(row.in_park) > 0 then segment.weight = segment.weight / (1+tonumber(row.in_park)) end
 	end
