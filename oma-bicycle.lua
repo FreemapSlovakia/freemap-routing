@@ -279,6 +279,10 @@ function way_function (way, result)
   local amenity = way:get_value_by_key("amenity")
   local public_transport = way:get_value_by_key("public_transport")
   local bridge = way:get_value_by_key("bridge")
+  local railway = way:get_value_by_key("railway")
+  if railway == 'tram' and  way:get_value_by_key("bicycle") then
+	data.highway='tram'
+  end
 
   if (not data.highway or data.highway == '') and
   (not route or route == '') and
@@ -343,6 +347,9 @@ function way_function (way, result)
   elseif public_transport and profile.platform_speeds[public_transport] then
     result.forward_speed = profile.platform_speeds[public_transport]
     result.backward_speed = profile.platform_speeds[public_transport]
+  elseif data.highway == 'tram' and bicycle and profile.access_tag_whitelist[bicycle] then
+	result.forward_speed = default_speed
+    result.backward_speed = default_speed
   -- railways
   elseif profile.use_public_transport and railway and profile.railway_speeds[railway] and profile.access_tag_whitelist[access] then
     result.forward_mode = mode.train
@@ -389,6 +396,7 @@ function way_function (way, result)
       end
     end
   end
+
   if way:get_value_by_key("segregated") == "yes" and bicycle and profile.access_tag_whitelist[bicycle] then
 	result.forward_speed = default_speed
     result.backward_speed = default_speed
@@ -467,7 +475,6 @@ function way_function (way, result)
   limit( result, maxspeed, maxspeed_forward, maxspeed_backward )
 
   -- convert duration into cyclability
-  local is_unsafe = profile.safety_penalty < 1 and profile.unsafe_highway_list[data.highway]
   if result.forward_speed > 0 then
     -- convert from km/h to m/s
     result.forward_rate = result.forward_speed / 3.6;
@@ -483,8 +490,13 @@ function way_function (way, result)
     end
   end
   if data.highway == 'cycleway' then 
-	result.forward_rate = result.forward_rate*1.4
-    result.backward_rate = result.backward_rate*1.4
+	if way:get_value_by_key("segregated") == "no" then
+     result.forward_rate = result.forward_rate*1.2
+     result.backward_rate = result.backward_rate*1.2
+	else
+ 	  result.forward_rate = result.forward_rate*1.4
+      result.backward_rate = result.backward_rate*1.4
+	end
   end
   if data.highway == 'cycleway' and foot ~= 'yes' and foot ~= 'designated' then
     result.forward_rate = result.forward_rate*1.5
@@ -495,10 +507,9 @@ function way_function (way, result)
     if result.forward_mode == mode.cycling then result.forward_rate = result.forward_rate*1.2 end
     if result.backward_mode == mode.cycling then result.backward_rate = result.backward_rate*1.2 end
   end 
-  --if way:get_value_by_key("fmrelbicycleref") or way:get_value_by_key("fmrelbicycleblue") or way:get_value_by_key("fmrelbicyclered") or way:get_value_by_key("fmrelbicyclegreen") or way:get_value_by_key("fmrelbicycleyellow") then
   if bicycle_ways[way:id()]  then
-    result.forward_rate = result.forward_rate*1.4
-    result.backward_rate = result.backward_rate*1.4
+    if result.forward_mode == mode.cycling then result.forward_rate = result.forward_rate*1.4 end
+    if result.backward_mode == mode.cycling then result.backward_rate = result.backward_rate*1.4 end
   end
 
  -- if result.duration > 0 then
