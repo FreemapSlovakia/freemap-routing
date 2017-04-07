@@ -412,7 +412,7 @@ function way_function (way, result)
 
   if onewayClass == "yes" or onewayClass == "1" or onewayClass == "true" then
     result.backward_mode = mode.inaccessible
-  elseif onewayClass == "no" or onewayClass == "0" or onewayClass == "false" then
+  elseif onewayClass == "no" or onewayClass == "0" or onewayClass == "false" or onewayClass == "tolerated" then
     -- prevent implied oneway
   elseif onewayClass == "-1" then
     result.forward_mode = mode.inaccessible
