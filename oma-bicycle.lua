@@ -275,6 +275,7 @@ function way_function (way, result)
   if Handlers.run(handlers,way,result,data,profile) == false then
     return
   end
+  if route_ways[way:id()] then data.highway=route_ways[way:id()]; end
 
   -- initial routability check, filters out buildings, boundaries, etc
   local route = way:get_value_by_key("route")
