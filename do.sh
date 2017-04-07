@@ -20,13 +20,10 @@ cd $SCRIPTPATH
 
 
 cp *lua $osrmdir
-out="$out
-starting to download: `date`"
 d=`date --date="today" +"%g%m%d"`
 scp -p -P 21122 92.240.244.41:/freemap/datastore.fm/httpd/dev/tmp/osmosis/planet/bigslovakia$d.pbf $datadir/bigslovakia.pbf
 
-out="$out
-import into postgis: `date`"
+out="$out, import into postgis: `date`"
 osm2pgsql --create --slim --latlong --style osrm.style --database $dbname --prefix "osrm_osm" $datadir/bigslovakia.pbf > /dev/null 2>&1
 
 echo "SELECT 'vacuum analyze ' || table_name ||';' FROM information_schema.tables WHERE table_name like '$prefix_%' limit 20" | psql -t $dbname| psql -q $dbname
@@ -42,23 +39,16 @@ echo "select 'foot_ways={' || string_agg(distinct concat('[', parts::text, ']=\"
 osmosis --read-pbf file="$datadir/bigslovakia.pbf" --bounding-box bottom=47.96 left=16.9 top=48.3 right=17.33 --write-pbf file="$datadir/bratislava.pbf"
 
 f="bigslovakia"
+echo "BICYCLE routing"
+out="$out, bicycle profile $f: `date`"
+
+osrm-extract -p oma-bicycle.lua $datadir/$f.pbf && osrm-contract $datadir/$f.osrm && mv $datadir/$f.osrm* $datadir/bicycle-osrm/ && killall osrm-routed
+
 cd $osrmdir
 echo "FOOT routing"
 #f="bratislava";
-out="$out
-\nfoot profile $f: `date`"
-rm $datadir/$f.osrm*
+out="$out, foot profile $f: `date`"
 osrm-extract -p oma-foot.lua $datadir/$f.pbf && osrm-contract $datadir/$f.osrm && mv $datadir/$f.osrm* $datadir/osrm && killall osrm-routed
-
-echo "BICYCLE routing"
-out="$out
-bicycle profile $f: `date`"
-
-f="bigslovakia"
-rm $datadir/$f.osrm*
-osrm-extract -p oma-bicycle.lua $datadir/$f.pbf && osrm-contract $datadir/$f.osrm && mv $datadir/$f.osrm* $datadir/bicycle-osrm/
-killall osrm-routed
-
 
 #    while :; do osrm-routed /home/zaloha/db/tmp/osrm/bigslovakia-fmrel.osrm ; done 
 
@@ -71,6 +61,6 @@ killall osrm-routed
 
 
 #killall osrm-routed
-out="$out
-end: `date`"
+out="$out, end: `date`"
 echo $out
+echo $out | sed 's/,/\n/g'
