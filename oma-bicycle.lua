@@ -471,7 +471,7 @@ function way_function (way, result)
   if result.forward_speed > 0 then
     -- convert from km/h to m/s
     result.forward_rate = result.forward_speed / 3.6;
-	if tonumber(maxspeed) >= 60 or way:get_value_by_key("lanes") and tonumber(way:get_value_by_key("lanes")) >= 2 then
+	if tonumber(maxspeed) >= 60 or way:get_value_by_key("lanes") and tonumber(way:get_value_by_key("lanes")) >= 2 or public_transport_ways[way:id()] then
 	  result.forward_rate = result.forward_rate * 0.5
     elseif profile.unsafe_highway[data.highway] then
       result.forward_rate = result.forward_rate * profile.unsafe_highway[data.highway]
@@ -480,7 +480,7 @@ function way_function (way, result)
   if result.backward_speed > 0 then
     -- convert from km/h to m/s
     result.backward_rate = result.backward_speed / 3.6;
-	if tonumber(maxspeed) >= 60 then
+	if tonumber(maxspeed) >= 60 or way:get_value_by_key("lanes") and tonumber(way:get_value_by_key("lanes")) >= 2 or public_transport_ways[way:id()] then
 	  result.backward_rate = result.backward_rate * 0.5;
     elseif profile.unsafe_highway[data.highway] then
       result.backward_rate = result.backward_rate * profile.unsafe_highway[data.highway]
