@@ -33,7 +33,7 @@ local profile = {
   -- reduce the driving speed by 30% for unsafe roads
   -- local safety_penalty            = 0.7,
   safety_penalty            = 0.6,
-  use_public_transport      = true,
+  use_public_transport      = false,
 
   allowed_start_modes = Set {
     mode.cycling,
