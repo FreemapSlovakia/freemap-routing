@@ -145,11 +145,6 @@ local profile = {
     platform = walking_speed
   },
 
-  amenity_speeds = {
-    parking = 10,
-    parking_entrance = 10
-  },
-
   man_made_speeds = {
     pier = walking_speed
   },
@@ -354,10 +349,6 @@ function way_function (way, result)
     result.backward_mode = mode.train
     result.forward_speed = profile.railway_speeds[railway]
     result.backward_speed = profile.railway_speeds[railway]
-  elseif amenity and profile.amenity_speeds[amenity] then
-    -- parking areas
-    result.forward_speed = profile.amenity_speeds[amenity]
-    result.backward_speed = profile.amenity_speeds[amenity]
   elseif profile.bicycle_speeds[data.highway] then
     -- regular ways
     result.forward_speed = profile.bicycle_speeds[data.highway]
@@ -458,16 +449,10 @@ function way_function (way, result)
   end
 
   -- cycleways
-  if cycleway and profile.cycleway_tags[cycleway] then
-    result.forward_speed = profile.bicycle_speeds["cycleway"]
-    result.backward_speed = profile.bicycle_speeds["cycleway"]
-  elseif cycleway_left and profile.cycleway_tags[cycleway_left] then
-    result.forward_speed = profile.bicycle_speeds["cycleway"]
-    result.backward_speed = profile.bicycle_speeds["cycleway"]
-  elseif cycleway_right and profile.cycleway_tags[cycleway_right] then
-    result.forward_speed = profile.bicycle_speeds["cycleway"]
-    result.backward_speed = profile.bicycle_speeds["cycleway"]
-  end
+--  if cycleway and profile.cycleway_tags[cycleway] then result.forward_speed = profile.bicycle_speeds["cycleway"]; result.backward_speed = profile.bicycle_speeds["cycleway"]
+--  elseif cycleway_left and profile.cycleway_tags[cycleway_left] then result.forward_speed = profile.bicycle_speeds["cycleway"]; result.backward_speed = profile.bicycle_speeds["cycleway"]
+--  elseif cycleway_right and profile.cycleway_tags[cycleway_right] then result.forward_speed = profile.bicycle_speeds["cycleway"]; result.backward_speed = profile.bicycle_speeds["cycleway"]
+--  end
 
   -- dismount
   if bicycle == "dismount" then
@@ -507,8 +492,8 @@ function way_function (way, result)
   end
 
   if bicycle and profile.cycleway_tags[bicycle] then
-    result.forward_rate = result.forward_rate*1.2
-    result.backward_rate = result.backward_rate*1.2
+    if result.forward_mode == mode.cycling then result.forward_rate = result.forward_rate*1.2 end
+    if result.backward_mode == mode.cycling then result.backward_rate = result.backward_rate*1.2 end
   end 
   --if way:get_value_by_key("fmrelbicycleref") or way:get_value_by_key("fmrelbicycleblue") or way:get_value_by_key("fmrelbicyclered") or way:get_value_by_key("fmrelbicyclegreen") or way:get_value_by_key("fmrelbicycleyellow") then
   if bicycle_ways[way:id()]  then
