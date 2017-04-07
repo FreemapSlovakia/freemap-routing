@@ -27,7 +27,7 @@ local profile = {
   oneway_handling           = true,
   traffic_light_penalty     = 2,
   u_turn_penalty            = 20,
-  turn_penalty              = 6,
+  turn_penalty              = 3,
   turn_bias                 = 1.4,
 
   -- reduce the driving speed by 30% for unsafe roads
@@ -94,14 +94,6 @@ local profile = {
   	'shared'
   },
 
-  unsafe_highway_list = Set {
-  	'primary',
-   	'secondary',
-   	'tertiary',
-   	'primary_link',
-   	'secondary_link',
-   	'tertiary_link'
-  },
   unsafe_highway = { 
 	primary = 0.4, primary_link = 0.5, 
 	secondary= 0.6, secondary_link = 0.6, 
@@ -479,14 +471,18 @@ function way_function (way, result)
   if result.forward_speed > 0 then
     -- convert from km/h to m/s
     result.forward_rate = result.forward_speed / 3.6;
-    if profile.unsafe_highway[data.highway] then
+	if tonumber(maxspeed) >= 60 or way:get_value_by_key("lanes") and tonumber(way:get_value_by_key("lanes")) >= 2 then
+	  result.forward_rate = result.forward_rate * 0.5
+    elseif profile.unsafe_highway[data.highway] then
       result.forward_rate = result.forward_rate * profile.unsafe_highway[data.highway]
     end
   end
   if result.backward_speed > 0 then
     -- convert from km/h to m/s
     result.backward_rate = result.backward_speed / 3.6;
-    if profile.unsafe_highway[data.highway] then
+	if tonumber(maxspeed) >= 60 then
+	  result.backward_rate = result.backward_rate * 0.5;
+    elseif profile.unsafe_highway[data.highway] then
       result.backward_rate = result.backward_rate * profile.unsafe_highway[data.highway]
     end
   end
