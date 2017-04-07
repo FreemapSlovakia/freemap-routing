@@ -121,7 +121,7 @@ end
 function way_function (way, result)
   -- initial routability check, filters out buildings, boundaries, etc
   local highway = way:get_value_by_key("highway")
-	if route_ways[way:id()] then local highway=route_ways[way:id()]; end
+  if route_ways[way:id()] then highway=route_ways[way:id()]; end
 
   local leisure = way:get_value_by_key("leisure")
   local route = way:get_value_by_key("route")
