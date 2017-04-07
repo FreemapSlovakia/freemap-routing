@@ -28,7 +28,7 @@ local profile = {
   traffic_light_penalty     = 2,
   u_turn_penalty            = 20,
   turn_penalty              = 6,
-  turn_bias                 = 1.4,
+  turn_bias                 = 1.7,
 
   -- reduce the driving speed by 30% for unsafe roads
   -- local safety_penalty            = 0.7,
@@ -408,6 +408,7 @@ function way_function (way, result)
   if junction == "roundabout" or junction == "circular" or data.highway == "motorway" then
     impliedOneway = true
   end
+  if oneway == "yes" then impliedOneway = true; end
 
   if onewayClass == "yes" or onewayClass == "1" or onewayClass == "true" then
     result.backward_mode = mode.inaccessible
