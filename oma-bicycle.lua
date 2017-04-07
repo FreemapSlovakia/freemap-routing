@@ -28,7 +28,7 @@ local profile = {
   traffic_light_penalty     = 2,
   u_turn_penalty            = 20,
   turn_penalty              = 6,
-  turn_bias                 = 1.7,
+  turn_bias                 = 1.4,
 
   -- reduce the driving speed by 30% for unsafe roads
   -- local safety_penalty            = 0.7,
@@ -562,5 +562,10 @@ function turn_function(turn)
       if not turn.source_restricted and turn.target_restricted then
           turn.weight = turn.weight + 3000
       end
+	  if normalized_angle >= 0.0 then
+	    turn.weight = turn.weight+normalized_angle * normalized_angle * profile.turn_penalty / profile.turn_bias
+  	  else
+    	turn.weight = turn.weight+normalized_angle * normalized_angle * profile.turn_penalty * profile.turn_bias
+  	  end
   end
 end
