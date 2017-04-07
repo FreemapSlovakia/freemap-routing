@@ -491,7 +491,7 @@ function way_function (way, result)
     result.backward_rate = result.backward_rate*1.5
   end
 
-  if bicycle and profile.cycleway_tags[bicycle] then
+  if bicycle and profile.cycleway_tags[bicycle] and data.highway ~= 'cycleway' then
     if result.forward_mode == mode.cycling then result.forward_rate = result.forward_rate*1.2 end
     if result.backward_mode == mode.cycling then result.backward_rate = result.backward_rate*1.2 end
   end 
