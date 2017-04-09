@@ -360,7 +360,11 @@ function way_function (way, result)
     -- biking not allowed, maybe we can push our bike?
     -- essentially requires pedestrian profiling, for example foot=no mean we can't push a bike
     if foot ~= 'no' and (junction ~= "roundabout" and junction ~= "circular") then
-      if profile.pedestrian_speeds[data.highway] then
+	  local width = tonumber(way:get_value_by_key("width"))
+	  if profile.pedestrian_speeds[data.highway] and width and width ~= "" and tonumber(width) >= 5 then
+		result.forward_speed = default_speed
+        result.backward_speed = default_speed
+      elseif profile.pedestrian_speeds[data.highway] then
         -- pedestrian-only ways and areas
         result.forward_speed = profile.pedestrian_speeds[data.highway]
         result.backward_speed = profile.pedestrian_speeds[data.highway]
