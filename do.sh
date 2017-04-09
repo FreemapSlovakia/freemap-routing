@@ -2,11 +2,11 @@
 # prefix used by osm2pgsql --slim
 dbname='mapnik';
 prefix='osrm_osm';
-datadir='/home/zaloha/db/tmp'
+datadir='/home/ssd/osrm'
 osrmdir='/home/vseobecne/ine/osrmv5'
 
 date
-out="starting: `date`"
+out=" starting: `date`"
 
 SCRIPT=$(readlink -f "$0")
 # Absolute path this script is in, thus /home/user/bin
@@ -19,13 +19,15 @@ cd $SCRIPTPATH
 #echo "select 'crossings={' || string_agg(distinct concat('[', id::text, '] = TRUE'), ', ') || '};' from (select nodes.id, (unnest(ways.tags)) as tags from fresh_osm_nodes as nodes, fresh_osm_ways as ways where nodes.tags && array['crossing'] and ways.nodes && array[nodes.id]) as t where array[tags] && array['primary','secondary','tertiary'] ;"| psql -t mapnik > tmp/crossing.lua
 
 
-cp *lua $osrmdir
 d=`date --date="today" +"%g%m%d"`
-scp -p -P 21122 92.240.244.41:/freemap/datastore.fm/httpd/dev/tmp/osmosis/planet/bigslovakia$d.pbf $datadir/bigslovakia.pbf
+#scp -p -P 21122 92.240.244.41:/freemap/datastore.fm/httpd/dev/tmp/osmosis/planet/bigslovakia$d.pbf $datadir/ttt.pbf
+bbox=`echo "select concat('bottom=', round(st_ymin(w)::numeric,3), ' left=', round(st_xmin(w)::numeric,3), ' top=', round(st_ymax(w)::numeric,3), ' right=', round(st_xmax(w)::numeric,3)) from (select st_collect(geometry(p)) as w from t_elevation) as t ;" | psql -t $dbname`
+osmosis --read-pbf file="$datadir/ttt.pbf" --bounding-box $bbox --write-pbf file="$datadir/bigslovakia.pbf"
+#rm $datadir/ttt.pbf
+osmosis --read-pbf file="$datadir/bigslovakia.pbf" --bounding-box bottom=47.96 left=16.9 top=48.3 right=17.33 --write-pbf file="$datadir/bratislava.pbf"
 
 out="$out, import into postgis: `date`"
-osm2pgsql --create --slim --latlong --style osrm.style --database $dbname --prefix "osrm_osm" $datadir/bigslovakia.pbf > /dev/null 2>&1
-
+osm2pgsql --create --slim --latlong --style osrm.style --database $dbname --prefix $prefix $datadir/ttt.pbf > /dev/null #2>&1
 echo "SELECT 'vacuum analyze ' || table_name ||';' FROM information_schema.tables WHERE table_name like '$prefix_%' limit 20" | psql -t $dbname| psql -q $dbname
 
 # highways that are defined only by relation tags
@@ -38,19 +40,23 @@ echo "select 'public_transport_ways={'|| string_agg(distinct concat('[', parts::
 
 # cat main-roads.sql | psql -q $dbname # hopefully obsolete
 
-osmosis --read-pbf file="$datadir/bigslovakia.pbf" --bounding-box bottom=47.96 left=16.9 top=48.3 right=17.33 --write-pbf file="$datadir/bratislava.pbf"
+cp *lua $osrmdir
 
+cd $osrmdir
 f="bigslovakia"
 echo "BICYCLE routing"
 out="$out, bicycle profile $f: `date`"
 
-osrm-extract -p oma-bicycle.lua $datadir/$f.pbf && osrm-contract $datadir/$f.osrm && mv $datadir/$f.osrm* $datadir/bicycle-osrm/ && killall osrm-routed
+osrm-extract -p oma-bicycle.lua $datadir/$f.pbf && osrm-contract $datadir/$f.osrm && mv $datadir/$f.osrm* $datadir/bicycle/ && killall osrm-routed
 
-cd $osrmdir
 echo "FOOT routing"
 #f="bratislava";
 out="$out, foot profile $f: `date`"
-osrm-extract -p oma-foot.lua $datadir/$f.pbf && osrm-contract $datadir/$f.osrm && mv $datadir/$f.osrm* $datadir/osrm && killall osrm-routed
+osrm-extract -p oma-foot.lua $datadir/$f.pbf && osrm-contract $datadir/$f.osrm && mv $datadir/$f.osrm* $datadir/foot && killall osrm-routed
+
+echo "test routing"
+out="$out, test profile $f: `date`"
+osrm-extract -p oma-foot.lua $datadir/bratislava.pbf && osrm-contract $datadir/bratislava.osrm && mv $datadir/bratislava.osrm* $datadir/test && killall osrm-routed
 
 #    while :; do osrm-routed /home/zaloha/db/tmp/osrm/bigslovakia-fmrel.osrm ; done 
 
