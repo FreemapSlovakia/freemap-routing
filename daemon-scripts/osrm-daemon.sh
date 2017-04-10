@@ -54,7 +54,9 @@ case "$1" in
     start
     ;;
   stop)
-    stop
+    kill `ps ax |grep osrm-daemon| grep -v grep | sed 's/ .*//'`
+    sleep 2
+    killall osrm-routed
     ;;
   uninstall)
     uninstall
