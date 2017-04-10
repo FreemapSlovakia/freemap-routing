@@ -6,6 +6,7 @@ To use at your website, have a look at https://github.com/perliedman/leaflet-rou
 ## install 
 - run `upgrade.sh` in your $osrmdir (the last step needs to run as root)
 - create a PostGIS database, with access to schema public for a user
+  - create a PostGIS function getz(point), which returns elevation of the point
 - after you've built the data, run `deploy` from `daemon-scripts` as root (it will install rc script for the daemon)
 - for your convenience, set up reverse proxy in your http daemon
 
