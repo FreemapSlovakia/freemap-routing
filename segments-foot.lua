@@ -33,7 +33,8 @@ function segment_function (segment)
 	end
 	-- penalize footways close to major roads
 	if row and row.next_to_major then 
-		if tonumber(row.next_to_major) > 0 then segment.weight = segment.weight * (1+tonumber(row.next_to_major)) end
+		if tonumber(row.next_to_major) > 4 then segment.weight = segment.weight * 4 
+		elseif tonumber(row.next_to_major) > 0 then segment.weight = segment.weight * (1+tonumber(row.next_to_major)) end
 	end
 	-- prefer footways in forrest/park/..., todo: avoid ways in industrial areas.
 	if row and row.in_park then
