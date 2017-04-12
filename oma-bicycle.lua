@@ -31,7 +31,6 @@ local profile = {
   turn_bias                 = 1.4,
 
   -- reduce the driving speed by 30% for unsafe roads
-  -- local safety_penalty            = 0.7,
   safety_penalty            = 0.6,
   use_public_transport      = false,
 
@@ -472,10 +471,11 @@ function way_function (way, result)
   limit( result, maxspeed, maxspeed_forward, maxspeed_backward )
 
   -- convert duration into cyclability
+  local lanes = way:get_value_by_key("lanes")
   if result.forward_speed > 0 then
     -- convert from km/h to m/s
     result.forward_rate = result.forward_speed / 3.6;
-	if tonumber(maxspeed) >= 60 or way:get_value_by_key("lanes") and tonumber(way:get_value_by_key("lanes")) >= 2 or public_transport_ways[way:id()] then
+	if tonumber(maxspeed) >= 60 or lanes and tonumber(lanes) >= 2 or public_transport_ways[way:id()] then
 	  result.forward_rate = result.forward_rate * 0.5
     elseif profile.unsafe_highway[data.highway] then
       result.forward_rate = result.forward_rate * profile.unsafe_highway[data.highway]
@@ -484,7 +484,7 @@ function way_function (way, result)
   if result.backward_speed > 0 then
     -- convert from km/h to m/s
     result.backward_rate = result.backward_speed / 3.6;
-	if tonumber(maxspeed) >= 60 or way:get_value_by_key("lanes") and tonumber(way:get_value_by_key("lanes")) >= 2 or public_transport_ways[way:id()] then
+	if tonumber(maxspeed) >= 60 or lanes and tonumber(lanes) >= 2 or public_transport_ways[way:id()] then
 	  result.backward_rate = result.backward_rate * 0.5;
     elseif profile.unsafe_highway[data.highway] then
       result.backward_rate = result.backward_rate * profile.unsafe_highway[data.highway]
