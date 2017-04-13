@@ -56,6 +56,7 @@ osrm-extract -p oma-foot.lua $datadir/$f.pbf && osrm-contract $datadir/$f.osrm &
 
 echo "test routing"
 out="$out, test profile $f: `date`"
+STXXLCFG="stxxl-test"; echo "disk=/tmp/test-stxxl,2G,memory" > $STXXLCFG
 osrm-extract -p oma-foot.lua $datadir/bratislava.pbf && osrm-contract $datadir/bratislava.osrm && mv $datadir/bratislava.osrm* $datadir/test && killall osrm-routed
 
 #    while :; do osrm-routed /home/zaloha/db/tmp/osrm/bigslovakia-fmrel.osrm ; done 
