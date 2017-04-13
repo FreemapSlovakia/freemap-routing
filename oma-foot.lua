@@ -10,6 +10,8 @@ local find_access_tag = require("osrm-backend/profiles/lib/access").find_access_
 require("segments-foot");
 
 properties.weight_name = 'rate'
+properties.force_split_edges = true
+
 -- Begin of globals
 barrier_whitelist = { [""] = true, ["cycle_barrier"] = true, ["bollard"] = true, ["entrance"] = true, ["cattle_grid"] = true, ["border_control"] = true, ["toll_booth"] = true, ["sally_port"] = true, ["gate"] = true, ["no"] = true, ["block"] = true, ["kerb"] = true, ["swing_gate"] = true, ["rope"] = true, ["stile"] = true, ["chain"] = true}
 barrier_blacklist = Set { 'yes', 'wall','fence'}

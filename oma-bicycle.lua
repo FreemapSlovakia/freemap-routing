@@ -16,7 +16,7 @@ properties.use_turn_restrictions         = false
 properties.continue_straight_at_waypoint = false
 --properties.weight_name                   = 'duration'
 properties.weight_name                   = 'cyclability'
-
+properties.force_split_edges = true
 
 local default_speed = 17
 local walking_speed = 6
