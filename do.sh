@@ -46,13 +46,16 @@ cd $osrmdir
 f="bigslovakia"
 echo "BICYCLE routing"
 out="$out, bicycle profile $f: `date`"
-
-osrm-extract -p oma-bicycle.lua $datadir/$f.pbf && osrm-contract $datadir/$f.osrm && mv $datadir/$f.osrm* $datadir/bicycle/ && killall osrm-routed
+profile=bicycle; mkdir -p $datadir/tmp-$profile; cp $datadir/$f.pbf $datadir/tmp-$profile/
+STXXLCFG="stxxl-$profile"; echo "disk=/tmp/stxxl-$profile,2G,memory" > $STXXLCFG
+osrm-extract -p oma-$profile.lua $datadir/tmp-$profile/$f.pbf && osrm-contract $datadir/tmp-$profile/$f.osrm && mv $datadir/tmp-$profile/$f.osrm* $datadir/$profile/ && killall osrm-routed
 
 echo "FOOT routing"
 #f="bratislava";
 out="$out, foot profile $f: `date`"
-osrm-extract -p oma-foot.lua $datadir/$f.pbf && osrm-contract $datadir/$f.osrm && mv $datadir/$f.osrm* $datadir/foot && killall osrm-routed
+profile=foot; mkdir -p $datadir/tmp-$profile; cp $datadir/$f.pbf $datadir/tmp-$profile/
+STXXLCFG="stxxl-$profile"; echo "disk=/tmp/stxxl-$profile,2G,memory" > $STXXLCFG
+osrm-extract -p oma-$profile.lua $datadir/tmp-$profile/$f.pbf && osrm-contract $datadir/tmp-$profile/$f.osrm && mv $datadir/tmp-$profile/$f.osrm* $datadir/$profile/ && killall osrm-routed
 
 echo "test routing"
 out="$out, test profile $f: `date`"
