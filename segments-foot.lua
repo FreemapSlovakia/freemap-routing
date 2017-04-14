@@ -10,7 +10,7 @@ function segment_function (segment)
 		.. ", getz(ST_SetSRID(st_makepoint(" .. segment.target.lon .. "," .. segment.target.lat .. "), 4326)::geography) as ele_last" 
 		.. ", (select count(*) from poi where st_dwithin(".. line .." ::geography, way, 50) and kategoria(typy, 'priroda')) as number_poi"
 	--	.. ", (select sum(0.5*par*st_length(st_intersection(" .. line ..", way)::geography))/(0.01+ st_length("..line.."::geography)) from osrm_major where st_dwithin("..line..", way, 0)) as pri_hlavnej"
-		.. ", (select sum(case when highway in ('motorway','motorway_link','trunk','trunk_link','primary','primary_link') then 2*st_length(st_intersection(geometry(st_buffer(geography("..line.."), 25)), way)::geography) when highway in ('secondary','secondary_link', 'tertiary','tertiary_link') then 1.5*st_length(st_intersection(geometry(st_buffer(geography("..line.."), 15)), way)::geography) end)/(0.01+ st_length("..line.."::geography)) from osrm_osm_line where st_dwithin("..line..", way, 0.005) and highway in ('motorway','motorway_link','trunk','trunk_link','primary','primary_link','secondary','secondary_link', 'tertiary','tertiary_link') and tunnel is null ) as next_to_major"
+		.. ", (select sum(case when highway in ('motorway','motorway_link','trunk','trunk_link','primary','primary_link') then 2.0*st_length(st_intersection(geometry(st_buffer(geography("..line.."), 25)), way)::geography) when highway in ('secondary','secondary_link', 'tertiary','tertiary_link') then 1.5*st_length(st_intersection(geometry(st_buffer(geography("..line.."), 15)), way)::geography) when  \"natural\" = 'tree_row' then -1.0*st_length(st_intersection(geometry(st_buffer(geography("..line.."), 15)), way)::geography) end)/(0.01+ st_length("..line.."::geography)) from osrm_osm_line where st_dwithin("..line..", way, 0.005) and highway in ('motorway','motorway_link','trunk','trunk_link','primary','primary_link','secondary','secondary_link', 'tertiary','tertiary_link') and tunnel is null or \"natural\" = 'tree_row') as next_to_major"
 		.. ", (select sum(st_length(st_intersection("..line..", way)::geography)*(case when landuse in ('industrial', 'garages', 'construction','brownfield','landfill', 'quary') then -1 when landuse in ('village_green','grass','meadow') then 0.7 else 1 end))/(0.01+ st_length("..line.."::geography)) from osrm_osm_polygon where st_dwithin("..line..", way, 0.005) and (landuse in ('industrial', 'garages', 'construction','brownfield','landfill', 'quary',  'village_green','grass','meadow', 'forest', 'vineyard', 'orchard') or \"natural\" in ('wood') or leisure in ('park') ) ) as in_park"
 	local cursor = assert( sql_con:execute(sql_query) )   -- execute querty
 	local row = cursor:fetch( {}, "a" )                   -- fetch first (and only) row
@@ -34,7 +34,8 @@ function segment_function (segment)
 	-- penalize footways close to major roads
 	if row and row.next_to_major then 
 		if tonumber(row.next_to_major) > 4 then segment.weight = segment.weight * 4 
-		elseif tonumber(row.next_to_major) > 0 then segment.weight = segment.weight * (1+tonumber(row.next_to_major)) end
+		elseif tonumber(row.next_to_major) > 0 then segment.weight = segment.weight * (1+tonumber(row.next_to_major)) 
+		elseif tonumber(row.next_to_major) < 0 then segment.weight = segment.weight / (1+tonumber(row.next_to_major)) end
 	end
 	-- prefer footways in forrest/park/..., todo: avoid ways in industrial areas.
 	if row and row.in_park then
