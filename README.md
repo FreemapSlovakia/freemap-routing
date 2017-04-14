@@ -1,7 +1,9 @@
 # freemap-routing
-Routing engine used in freemap. It is a OSRM with custom foot and bicycle profiles. Currently it is available at `http://pesi.routing.epsilon.sk` port 80. 
+Routing engine used in freemap. It is a OSRM with custom foot and bicycle profiles. Demo is available at [freemap.epsilon.sk](http://freemap.epsilon.sk/#page=navigacia&map=C/13/48.13659/17.13172)
 
-To use at your website, have a look at https://github.com/perliedman/leaflet-routing-machine/
+Backend is currently available at `http://pesi.routing.epsilon.sk` and `http://mtb-bike.routing.epsilon.sk` port 80. 
+
+To use at your website, have a look at [LRM](https://github.com/perliedman/leaflet-routing-machine/)
 
 ## install 
 - run `upgrade.sh` in your $osrmdir (the last step needs to run as root)
