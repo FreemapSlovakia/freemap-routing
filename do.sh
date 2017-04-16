@@ -20,7 +20,7 @@ cd $SCRIPTPATH
 
 
 d=`date --date="today" +"%g%m%d"`
-#scp -p -P 21122 92.240.244.41:/freemap/datastore.fm/httpd/dev/tmp/osmosis/planet/bigslovakia$d.pbf $datadir/ttt.pbf
+scp -p -P 21122 92.240.244.41:/freemap/datastore.fm/httpd/dev/tmp/osmosis/planet/bigslovakia$d.pbf $datadir/ttt.pbf
 bbox=`echo "select concat('bottom=', round(st_ymin(w)::numeric,3), ' left=', round(st_xmin(w)::numeric,3), ' top=', round(st_ymax(w)::numeric,3), ' right=', round(st_xmax(w)::numeric,3)) from (select st_collect(geometry(p)) as w from t_elevation) as t ;" | psql -t $dbname`
 osmosis --read-pbf file="$datadir/ttt.pbf" --bounding-box $bbox --write-pbf file="$datadir/bigslovakia.pbf"
 #rm $datadir/ttt.pbf
