@@ -33,14 +33,16 @@ function segment_function (segment)
 	end
 	-- penalize footways close to major roads
 	if row and row.next_to_major then 
-		if tonumber(row.next_to_major) > 4 then segment.weight = segment.weight * 4 
+		if tonumber(row.next_to_major) > 3 then segment.weight = segment.weight * 4 
 		elseif tonumber(row.next_to_major) > 0 then segment.weight = segment.weight * (1+tonumber(row.next_to_major)) 
 		elseif tonumber(row.next_to_major) < 0 then segment.weight = segment.weight / (1+tonumber(row.next_to_major)) end
 	end
 	-- prefer footways in forrest/park/..., todo: avoid ways in industrial areas.
 	if row and row.in_park then
-		if tonumber(row.in_park) > 0 then segment.weight = segment.weight / (1+tonumber(row.in_park)) end
-        if tonumber(row.in_park) < 0 then segment.weight = segment.weight * (1+math.abs(tonumber(row.in_park))) end
+		if tonumber(row.in_park) > 1 then segment.weight = segment.weight / 2 
+		elseif tonumber(row.in_park) > 0 then segment.weight = segment.weight / (1+tonumber(row.in_park)) end
+        if tonumber(row.in_park) < -1 then segment.weight = segment.weight * 2
+        elseif tonumber(row.in_park) < 0 then segment.weight = segment.weight * (1+math.abs(tonumber(row.in_park))) end
 	end
 	--print("nove:    " .. segment.distance .. " " .. segment.weight .. " " ..segment.duration)
 	cursor:close();
