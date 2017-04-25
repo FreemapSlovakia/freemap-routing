@@ -6,8 +6,10 @@ print("PostGIS connection opened")
 --
 
 function segment_function (segment)
+    local line = "st_makeline(ST_SetSRID(st_makepoint(" .. segment.source.lon .. "," .. segment.source.lat .. "), 4326), ST_SetSRID(st_makepoint(" .. segment.target.lon .. "," .. segment.target.lat .. "), 4326))";
 	local sql_query = "select (getz(ST_SetSRID(st_makepoint(" .. segment.target.lon .. "," .. segment.target.lat .. "), 4326)::geography) " .. 
 		" - getz(ST_SetSRID(st_makepoint(" .. segment.source.lon .. "," .. segment.source.lat .. "), 4326)::geography)) as ele_gain" 
+		.. ", (select sum(case when highway in ('motorway','motorway_link','trunk','trunk_link','primary','primary_link') then 1.0*st_length(st_intersection(geometry(st_buffer(geography("..line.."), 25)), way)::geography) when \"natural\" = 'tree_row' then -0.5*st_length(st_intersection(geometry(st_buffer(geography("..line.."), 15)), way)::geography) end)/(0.01+ st_length("..line.."::geography)) from osrm_osm_line where st_dwithin("..line..", way, 0.005) and (highway in ('motorway','motorway_link','trunk','trunk_link','primary','primary_link') and tunnel is null or \"natural\" = 'tree_row')) as next_to_major"
 	--	.. ", ";
 	local cursor = assert( sql_con:execute(sql_query) )   -- execute querty
 	local row = cursor:fetch( {}, "a" )                   -- fetch first (and only) row
@@ -24,9 +26,12 @@ function segment_function (segment)
         end
         -- time in seconds
 		segment.duration = segment.duration + extra;
-		--if math.abs(slope) > 4 then print(slope .. " " .. extra .. " " .. segment.weight .. " " ..segment.duration .. "dist: " .. segment.distance .." speed:" .. segment.distance/segment.duration) end
-		--if slope < -2 then segment.duration = segment.duration /3 end
 	end
+    if row and row.next_to_major then
+        if tonumber(row.next_to_major) > 1.5 then segment.weight = segment.weight * 2.5
+        elseif tonumber(row.next_to_major) > 0 then segment.weight = segment.weight * (1+tonumber(row.next_to_major))
+        elseif tonumber(row.next_to_major) < 0 then segment.weight = segment.weight / (1+tonumber(row.next_to_major)) end
+    end
 	cursor:close();
 end
 		
