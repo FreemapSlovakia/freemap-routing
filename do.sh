@@ -6,7 +6,7 @@ datadir='/home/ssd/osrm'
 osrmdir='/home/vseobecne/ine/osrmv5'
 
 date
-out=" starting: `date`"
+out=" starting:\t`date`"
 
 SCRIPT=$(readlink -f "$0")
 # Absolute path this script is in, thus /home/user/bin
@@ -26,8 +26,8 @@ osmosis --read-pbf file="$datadir/ttt.pbf" --bounding-box $bbox --write-pbf file
 #rm $datadir/ttt.pbf
 osmosis --read-pbf file="$datadir/bigslovakia.pbf" --bounding-box bottom=47.96 left=16.9 top=48.3 right=17.33 --write-pbf file="$datadir/bratislava.pbf"
 
-out="$out, import into postgis: `date`"
-osm2pgsql --create --slim --latlong --style osrm.style --database $dbname --prefix $prefix $datadir/ttt.pbf > /dev/null #2>&1
+out="$out,import into postgis: `date`"
+osm2pgsql --create --slim --latlong --style osrm.style --database $dbname --prefix $prefix $datadir/ttt.pbf > /dev/null 2>&1
 echo "SELECT 'vacuum analyze ' || table_name ||';' FROM information_schema.tables WHERE table_name like '$prefix_%' limit 20" | psql -t $dbname| psql -q $dbname
 
 # highways that are defined only by relation tags
@@ -45,34 +45,23 @@ cp *lua $osrmdir
 cd $osrmdir
 f="bigslovakia"
 echo "BICYCLE routing"
-out="$out, bicycle profile $f: `date`"
+out="$out,bicycle profile $f:\t`date`"
 profile=bicycle; mkdir -p $datadir/tmp-$profile; cp $datadir/$f.pbf $datadir/tmp-$profile/
 STXXLCFG="stxxl-$profile"; echo "disk=/tmp/stxxl-$profile,2G,memory" > $STXXLCFG
 osrm-extract -p oma-$profile.lua $datadir/tmp-$profile/$f.pbf && osrm-contract $datadir/tmp-$profile/$f.osrm && mv $datadir/tmp-$profile/$f.osrm* $datadir/$profile/ && killall osrm-routed
 
 echo "FOOT routing"
 #f="bratislava";
-out="$out, foot profile $f: `date`"
+out="$out,foot profile $f: `date`"
 profile=foot; mkdir -p $datadir/tmp-$profile; cp $datadir/$f.pbf $datadir/tmp-$profile/
 STXXLCFG="stxxl-$profile"; echo "disk=/tmp/stxxl-$profile,2G,memory" > $STXXLCFG
 osrm-extract -p oma-$profile.lua $datadir/tmp-$profile/$f.pbf && osrm-contract $datadir/tmp-$profile/$f.osrm && mv $datadir/tmp-$profile/$f.osrm* $datadir/$profile/ && killall osrm-routed
 
 echo "test routing"
-out="$out, test profile $f: `date`"
+out="$out,test profile $f: `date`"
 STXXLCFG="stxxl-test"; echo "disk=/tmp/test-stxxl,2G,memory" > $STXXLCFG
 osrm-extract -p oma-foot.lua $datadir/bratislava.pbf && osrm-contract $datadir/bratislava.osrm && mv $datadir/bratislava.osrm* $datadir/test && killall osrm-routed
 
-#    while :; do osrm-routed /home/zaloha/db/tmp/osrm/bigslovakia-fmrel.osrm ; done 
-
-#    while :; do osrm-routed -p 5001 /home/zaloha/db/tmp/bicycle-osrm/bigslovakia-fmrel.osrm ; done 
-
-#export JAVACMD_OPTIONS="-Djava.io.tmpdir=. -Xms2280m -Xmx5560m"
-#osmosis --read-pbf file="/home/zaloha/db/tmp/bigslovakia-fmrel.pbf" --bounding-box bottom=47.96 left=16.9 top=48.3 right=17.33 --write-pbf file="/home/zaloha/db/tmp/bratislava.osm.pbf" > /dev/null
-#osrm-extract -p foot.lua /home/zaloha/db/tmp/bratislava.osm.pbf >/dev/null
-#osrm-contract /home/zaloha/db/tmp/bratislava.osrm>/dev/null
-
-
-#killall osrm-routed
-out="$out, end: `date`"
+out="$out,end: `date`"
 echo $out
 echo $out | sed 's/,/\n/g'
