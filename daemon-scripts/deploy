@@ -4,3 +4,4 @@ cp -p osrm-daemon /usr/local/bin/
 cp -p osrm-daemon.sh /etc/init.d/
 update-rc.d osrm-daemon.sh defaults
 touch /var/log/osrm_daemon.log; chown michal /var/log/osrm_daemon.log
+echo "maybe implement confing of apache.conf into your apache.configuration"
