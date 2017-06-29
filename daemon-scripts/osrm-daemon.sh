@@ -54,9 +54,10 @@ case "$1" in
     start
     ;;
   stop)
-    kill `ps ax |grep osrm-daemon| grep -v grep | sed 's/ .*//'`
+    kill `ps ax |grep osrm-daemon| grep -v grep | sed 's/? .*//'`
     sleep 2
     killall osrm-routed
+	rm -f "$PIDFILE"
     ;;
   uninstall)
     uninstall
