@@ -1,8 +1,9 @@
 #!/bin/sh
-version="5.6.0";
+cd /home/vseobecne/ine/osrmv5/
+version="5.9.0";
 rm v* master.zip
 rm -rf osrm-backend*
-if [ 0 -eq 1 ]; then
+if [ 1 -eq 1 ]; then
 	wget https://github.com/Project-OSRM/osrm-backend/archive/v$version.zip
 	unzip -q v$version.zip
 	mv osrm-backend-$version osrm-backend

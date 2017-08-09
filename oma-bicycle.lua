@@ -176,7 +176,8 @@ local profile = {
   avoid = Set {
     'impassable',
     'construction'
-  }
+  },
+  construction_whitelist = {}
 }
 
 
@@ -197,7 +198,7 @@ end
 function get_restrictions(vector)
   for i,v in ipairs(profile.restrictions) do
     vector:Add(v)
-  end
+  end 
 end
 
 function node_function (node, result)
