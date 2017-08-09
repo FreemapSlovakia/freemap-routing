@@ -21,6 +21,7 @@ start() {
     return 1
   fi
   echo 'Starting service…' >&2
+  touch $LOGFILE; chown $RUNAS $LOGFILE
   local CMD="$SCRIPT &> \"$LOGFILE\" & echo \$!"
   su -c "$CMD" $RUNAS > "$PIDFILE"
   echo 'Service started' >&2
