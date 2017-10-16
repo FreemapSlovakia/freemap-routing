@@ -1,7 +1,7 @@
 #!/bin/sh
 # prefix used by osm2pgsql --slim
 
-if [ `ps ax| grep freemap-routing/do.sh | grep -v grep | wc -l` -gt 2 ]; then
+if [ `ps ax| grep freemap-routing/do.sh | grep bash | grep -v grep | wc -l` -gt 2 ]; then
  echo "script already running `ps ax| grep freemap-routing/do.sh|grep -v grep `";
  exit;
 fi
@@ -50,11 +50,12 @@ cp *lua $osrmdir
 
 cd $osrmdir
 f="bigslovakia"
+
 echo "BICYCLE routing"
 out="$out,bicycle profile $f:\t`date`"
 profile=bicycle; mkdir -p $datadir/tmp-$profile; cp $datadir/$f.pbf $datadir/tmp-$profile/
 STXXLCFG="stxxl-$profile"; echo "disk=/tmp/stxxl-$profile,2G,memory" > $STXXLCFG
-osrm-extract -p oma-$profile.lua $datadir/tmp-$profile/$f.pbf && osrm-contract $datadir/tmp-$profile/$f.osrm && mv $datadir/tmp-$profile/$f.osrm* $datadir/$profile/ && killall osrm-routed
+osrm-extract -p oma-$profile.lua $datadir/tmp-$profile/$f.pbf && osrm-contract $datadir/tmp-$profile/$f.osrm && mv $datadir/tmp-$profile/$f.osrm* $datadir/$profile/ && cp -f /usr/local/bin/osrm-routed /usr/local/bin/osrm-routed-$profile && killall osrm-routed-$profile
 rm $datadir/tmp-$profile/*pbf
 
 echo "FOOT routing"
@@ -62,14 +63,15 @@ echo "FOOT routing"
 out="$out,foot profile $f: `date`"
 profile=foot; mkdir -p $datadir/tmp-$profile; cp $datadir/$f.pbf $datadir/tmp-$profile/
 STXXLCFG="stxxl-$profile"; echo "disk=/tmp/stxxl-$profile,2G,memory" > $STXXLCFG
-osrm-extract -p oma-$profile.lua $datadir/tmp-$profile/$f.pbf && osrm-contract $datadir/tmp-$profile/$f.osrm && mv $datadir/tmp-$profile/$f.osrm* $datadir/$profile/ && killall osrm-routed
+osrm-extract -p oma-$profile.lua $datadir/tmp-$profile/$f.pbf && osrm-contract $datadir/tmp-$profile/$f.osrm && mv $datadir/tmp-$profile/$f.osrm* $datadir/$profile/ && cp -f /usr/local/bin/osrm-routed /usr/local/bin/osrm-routed-$profile && killall osrm-routed-$profile
 rm $datadir/tmp-$profile/*pbf
 
 
 echo "test routing"
 out="$out,test profile $f: `date`"
 STXXLCFG="stxxl-test"; echo "disk=/tmp/test-stxxl,2G,memory" > $STXXLCFG
-osrm-extract -p oma-foot.lua $datadir/bratislava.pbf && osrm-contract $datadir/bratislava.osrm && mv $datadir/bratislava.osrm* $datadir/test && killall osrm-routed
+osrm-extract -p oma-foot.lua $datadir/bratislava.pbf && osrm-contract $datadir/bratislava.osrm && mv $datadir/bratislava.osrm* $datadir/test && cp -f /usr/local/bin/osrm-routed /usr/local/bin/osrm-routed-test && killall osrm-routed-test
+
 
 out="$out,end: `date`"
 echo $out
