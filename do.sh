@@ -49,6 +49,8 @@ echo "select 'public_transport_ways={'|| string_agg(distinct concat('[', parts::
 cp *lua $osrmdir
 
 cd $osrmdir
+cp osrm-backend/profiles/car.lua oma-car.lua
+
 f="bigslovakia"
 
 echo "BICYCLE routing"
@@ -72,6 +74,12 @@ out="$out,test profile $f: `date`"
 STXXLCFG="stxxl-test"; echo "disk=/tmp/test-stxxl,2G,memory" > $STXXLCFG
 osrm-extract -p oma-foot.lua $datadir/bratislava.pbf && osrm-contract $datadir/bratislava.osrm && mv $datadir/bratislava.osrm* $datadir/test && cp -f /usr/local/bin/osrm-routed /usr/local/bin/osrm-routed-test && killall osrm-routed-test
 
+echo "CAR routing"
+out="$out,car profile $f:\t`date`"
+profile=car; mkdir -p $datadir/tmp-$profile; cp $datadir/$f.pbf $datadir/tmp-$profile/
+STXXLCFG="stxxl-$profile"; echo "disk=/tmp/stxxl-$profile,2G,memory" > $STXXLCFG
+osrm-extract -p oma-$profile.lua $datadir/tmp-$profile/$f.pbf && osrm-contract $datadir/tmp-$profile/$f.osrm && mv $datadir/tmp-$profile/$f.osrm* $datadir/$profile/ && cp -f /usr/local/bin/osrm-routed /usr/local/bin/osrm-routed-$profile && killall osrm-routed-$profile
+rm $datadir/tmp-$profile/*pbf
 
 out="$out,end: `date`"
 echo $out
