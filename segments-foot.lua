@@ -4,7 +4,7 @@ sql_env = assert( lua_sql.postgres() )
 sql_con = assert( sql_env:connect("mapnik") ) -- you can add db user/password here if needed
 print("PostGIS connection opened")
 
-function segment_function (segment)
+function segment_function (profile, segment)
 	local line = "st_makeline(ST_SetSRID(st_makepoint(" .. segment.source.lon .. "," .. segment.source.lat .. "), 4326), ST_SetSRID(st_makepoint(" .. segment.target.lon .. "," .. segment.target.lat .. "), 4326))";
 	local sql_query = "select getz(ST_SetSRID(st_makepoint(" .. segment.source.lon .. "," .. segment.source.lat .. "), 4326)::geography) as ele_first" 
 		.. ", getz(ST_SetSRID(st_makepoint(" .. segment.target.lon .. "," .. segment.target.lat .. "), 4326)::geography) as ele_last" 
