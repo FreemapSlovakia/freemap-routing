@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # prefix used by osm2pgsql --slim
 
 if [ `ps ax| grep freemap-routing/do.sh | grep bash | grep -v grep | wc -l` -gt 2 ]; then
@@ -11,6 +11,30 @@ dbname='mapnik';
 prefix='osrm_osm';
 datadir='/home/ssd/osrm'
 osrmdir='/home/vseobecne/ine/osrmv5'
+
+upgrade_osrm() {
+	profile=$1;
+	f="bigslovakia"
+	if [ "$profile" = "test" ]; then 
+		f="bratislava";
+	fi
+	echo $profil $f
+	cd $osrmdir
+	out="$out,$profile profile $f:\t`date`"
+	mkdir -p $datadir/tmp-$profile; cp $datadir/$f.pbf $datadir/tmp-$profile/
+#	STXXLCFG="stxxl-$profile"; echo "disk=/tmp/stxxl-$profile,2G,memory" > $STXXLCFG
+	osrm-extract -p oma-$profile.lua $datadir/tmp-$profile/$f.pbf && osrm-contract $datadir/tmp-$profile/$f.osrm && rm $datadir/$profile/* && mv $datadir/tmp-$profile/$f.osrm* $datadir/$profile/ && cp -f /usr/local/bin/osrm-routed /usr/local/bin/osrm-routed-$profile && killall osrm-routed-$profile
+	if [ $? -ne 0 ]; then exit; fi
+    rm $datadir/tmp-$profile/*pbf
+	echo 'ok'
+	# copy do live server
+	scp $datadir/$profile/* 10.9.0.1:$datadir/tmp-$profile/
+	scp /usr/local/bin/osrm-routed-$profile 10.9.0.1:
+	ssh 10.9.0.1 "rm $datadir/$profile/* && mv $datadir/tmp-$profile/* $datadir/$profile/ && cp -f ~/osrm-routed-$profile /usr/local/bin/ && killall osrm-routed-$profile";
+}
+
+#upgrade_osrm car; 
+#upgrade_osrm test; exit;
 
 date
 out=" starting:\t`date`"
@@ -51,35 +75,12 @@ cp *lua $osrmdir
 cd $osrmdir
 cp osrm-backend/profiles/car.lua oma-car.lua
 
-f="bigslovakia"
+cp oma-foot.lua oma-test.lua
+upgrade_osrm test
 
-echo "BICYCLE routing"
-out="$out,bicycle profile $f:\t`date`"
-profile=bicycle; mkdir -p $datadir/tmp-$profile; cp $datadir/$f.pbf $datadir/tmp-$profile/
-STXXLCFG="stxxl-$profile"; echo "disk=/tmp/stxxl-$profile,2G,memory" > $STXXLCFG
-osrm-extract -p oma-$profile.lua $datadir/tmp-$profile/$f.pbf && osrm-contract $datadir/tmp-$profile/$f.osrm && mv $datadir/tmp-$profile/$f.osrm* $datadir/$profile/ && cp -f /usr/local/bin/osrm-routed /usr/local/bin/osrm-routed-$profile && killall osrm-routed-$profile
-rm $datadir/tmp-$profile/*pbf
-
-echo "FOOT routing"
-#f="bratislava";
-out="$out,foot profile $f: `date`"
-profile=foot; mkdir -p $datadir/tmp-$profile; cp $datadir/$f.pbf $datadir/tmp-$profile/
-STXXLCFG="stxxl-$profile"; echo "disk=/tmp/stxxl-$profile,2G,memory" > $STXXLCFG
-osrm-extract -p oma-$profile.lua $datadir/tmp-$profile/$f.pbf && osrm-contract $datadir/tmp-$profile/$f.osrm && mv $datadir/tmp-$profile/$f.osrm* $datadir/$profile/ && cp -f /usr/local/bin/osrm-routed /usr/local/bin/osrm-routed-$profile && killall osrm-routed-$profile
-rm $datadir/tmp-$profile/*pbf
-
-
-echo "test routing"
-out="$out,test profile $f: `date`"
-STXXLCFG="stxxl-test"; echo "disk=/tmp/test-stxxl,2G,memory" > $STXXLCFG
-osrm-extract -p oma-foot.lua $datadir/bratislava.pbf && osrm-contract $datadir/bratislava.osrm && mv $datadir/bratislava.osrm* $datadir/test && cp -f /usr/local/bin/osrm-routed /usr/local/bin/osrm-routed-test && killall osrm-routed-test
-
-echo "CAR routing"
-out="$out,car profile $f:\t`date`"
-profile=car; mkdir -p $datadir/tmp-$profile; cp $datadir/$f.pbf $datadir/tmp-$profile/
-STXXLCFG="stxxl-$profile"; echo "disk=/tmp/stxxl-$profile,2G,memory" > $STXXLCFG
-osrm-extract -p oma-$profile.lua $datadir/tmp-$profile/$f.pbf && osrm-contract $datadir/tmp-$profile/$f.osrm && mv $datadir/tmp-$profile/$f.osrm* $datadir/$profile/ && cp -f /usr/local/bin/osrm-routed /usr/local/bin/osrm-routed-$profile && killall osrm-routed-$profile
-rm $datadir/tmp-$profile/*pbf
+upgrade_osrm bicycle
+upgrade_osrm car
+upgrade_osrm foot
 
 out="$out,end: `date`"
 echo $out
