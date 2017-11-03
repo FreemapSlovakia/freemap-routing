@@ -1,7 +1,7 @@
 # freemap-routing
-Routing engine used in freemap. It is a OSRM with custom foot and bicycle profiles. Demo is available at [freemap.epsilon.sk](http://freemap.epsilon.sk/#page=navigacia&map=C/13/48.13659/17.13172)
+Routing engine used in freemap. It is a OSRM with custom foot and bicycle profiles. Homepage is [routing.epsilon.sk](https://routing.epsilon.sk/) and it can be used at [www.freemap.sk](https://www.freemap.sk/?map=10/49.13905/19.58588&layers=T&transport=foot&points=49.10265/18.77563,49.17632/20.13657)
 
-Backend is currently available at `http://pesi.routing.epsilon.sk` and `http://mtb-bike.routing.epsilon.sk` port 80. 
+Backend is currently available at `https://routing.epsilon.sk` port 80. 
 
 To use at your website, have a look at [LRM](https://github.com/perliedman/leaflet-routing-machine/)
 
