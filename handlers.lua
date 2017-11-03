@@ -46,20 +46,20 @@ function WayHandlers.footrate(profile,way,result,data)
   result.forward_rate = math.max(result.forward_speed, 0)*3.6;
   result.backward_rate = math.max(result.backward_speed, 0)*3.6;
   if way:get_value_by_key("segregated") == "no" and way:get_value_by_key("bicycle") or highway=="cycleway" then
-         result.forward_rate = result.forward_rate*0.5; result.backward_rate = result.backward_rate*0.5;
+    result.forward_rate = result.forward_rate*0.5; result.backward_rate = result.backward_rate*0.5;
   end
-  if profile.unsafe_highway[highway] then
-        result.forward_rate = result.forward_rate*0.3; result.backward_rate = result.backward_rate*0.3;
+  if profile.unsafe_highway[data.highway] then
+    result.forward_rate = result.forward_rate*0.3; result.backward_rate = result.backward_rate*0.3;
   end
-  if profile.medium_highway[highway] then
+  if profile.medium_highway[data.highway] then
     result.forward_rate = result.forward_rate*0.6; result.backward_rate = result.backward_rate*0.6;
   end
   if foot_ways[way:id()] == "red" then
-        result.forward_rate = result.forward_rate*1.9; result.backward_rate = result.backward_rate*1.9;
+    result.forward_rate = result.forward_rate*1.9; result.backward_rate = result.backward_rate*1.9;
   elseif foot_ways[way:id()] == "blue" or foot_ways[way:id()] == "green" then
-        result.forward_rate = result.forward_rate*1.7; result.backward_rate = result.backward_rate*1.7;
-  elseif foot_ways[way:id()]  then
-        result.forward_rate = result.forward_rate*1.5; result.backward_rate = result.backward_rate*1.5;
+    result.forward_rate = result.forward_rate*1.7; result.backward_rate = result.backward_rate*1.7;
+  elseif foot_ways[way:id()] then
+    result.forward_rate = result.forward_rate*1.5; result.backward_rate = result.backward_rate*1.5;
   end
 end
 
@@ -87,5 +87,4 @@ function WayHandlers.footclassmud(profile,way,result,data)
 	result.forward_classes['mud'] = true; result.backward_classes['mud'] = true;
   end
 end
-
 
