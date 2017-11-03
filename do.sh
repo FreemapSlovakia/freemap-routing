@@ -25,6 +25,7 @@ upgrade_osrm() {
 #	STXXLCFG="stxxl-$profile"; echo "disk=/tmp/stxxl-$profile,2G,memory" > $STXXLCFG
 	osrm-extract -p oma-$profile.lua $datadir/tmp-$profile/$f.pbf && osrm-contract $datadir/tmp-$profile/$f.osrm && rm $datadir/$profile/* && mv $datadir/tmp-$profile/$f.osrm* $datadir/$profile/ && cp -f /usr/local/bin/osrm-routed /usr/local/bin/osrm-routed-$profile && killall osrm-routed-$profile
 	if [ $? -ne 0 ]; then exit; fi
+	stat -c %y $datadir/$profile/$f.osrm |sed 's/\..*//' > /home/izsk/weby/epsilon.sk/routing/last-mod-$profile
     rm $datadir/tmp-$profile/*pbf
 	echo 'ok'
 	# copy do live server
@@ -32,9 +33,6 @@ upgrade_osrm() {
 	scp /usr/local/bin/osrm-routed-$profile 10.9.0.1:
 	ssh 10.9.0.1 "rm $datadir/$profile/* && mv $datadir/tmp-$profile/* $datadir/$profile/ && cp -f ~/osrm-routed-$profile /usr/local/bin/ && killall osrm-routed-$profile";
 }
-
-#upgrade_osrm car; 
-#upgrade_osrm test; exit;
 
 date
 out=" starting:\t`date`"
@@ -44,6 +42,13 @@ SCRIPT=$(readlink -f "$0")
 SCRIPTPATH=$(dirname "$SCRIPT")
 cd $SCRIPTPATH
 
+cp *lua $osrmdir
+cp $osrmdir/oma-foot.lua $osrmdir/oma-test.lua
+
+#upgrade_osrm car; exit;
+#upgrade_osrm test; exit;
+
+
 # todo: preferuj cervenu pred modrou
 #echo "select 'bicycle_ways={' || string_agg(distinct concat('[', parts::text, ']=\"', name, '\"' ), ', ') || '};' from ( select first(name order by dlzka desc) as name, parts from (select name,unnest(parts) as parts, dlzka from (select osm_id, replace(name, '\"', '') as name, round(st_length(way)) as dlzka from trasy where typ='cyklotrasa' ) as f,${prefix}rels where osm_id*-1 = id and osm_id < 0) as t group by parts) as tt ;" | psql -t mapnik > tmp/route_bicycle.lua
 
@@ -51,6 +56,8 @@ cd $SCRIPTPATH
 
 d=`date --date="today" +"%g%m%d"`
 scp -p -P 21122 92.240.244.41:/freemap/datastore.fm/httpd/dev/tmp/osmosis/planet/bigslovakia$d.pbf $datadir/ttt.pbf
+stat -c %y $datadir/ttt.pbf |sed 's/\..*//' > /home/izsk/weby/epsilon.sk/routing/last-mod-data
+
 bbox=`echo "select concat('bottom=', round(st_ymin(w)::numeric,3), ' left=', round(st_xmin(w)::numeric,3), ' top=', round(st_ymax(w)::numeric,3), ' right=', round(st_xmax(w)::numeric,3)) from (select st_collect(geometry(p)) as w from t_elevation) as t ;" | psql -t $dbname`
 osmosis --read-pbf file="$datadir/ttt.pbf" --bounding-box $bbox --write-pbf file="$datadir/bigslovakia.pbf"
 #rm $datadir/ttt.pbf
