@@ -18,6 +18,11 @@ To use at your website, have a look at [LRM](https://github.com/perliedman/leafl
 
 # Features
 
+## profiles
+- foot profile: for urban walking and rural hiking
+- bicycle: city and trekking bicycle
+- car: default OSRM configuration
+
 ## common features
 - all standard features done by OSRM plus:
 - take elevation into account (uphill is slower than downhill; uphill is avoided if possible)
