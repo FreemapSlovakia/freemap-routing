@@ -32,6 +32,7 @@ upgrade_osrm() {
 	scp $datadir/$profile/* 10.9.0.1:$datadir/tmp-$profile/
 	scp /usr/local/bin/osrm-routed-$profile 10.9.0.1:
 	ssh 10.9.0.1 "rm $datadir/$profile/* && mv $datadir/tmp-$profile/* $datadir/$profile/ && cp -f ~/osrm-routed-$profile /usr/local/bin/ && killall osrm-routed-$profile";
+	oma f epsilon.sk/routing
 }
 
 date
