@@ -46,8 +46,8 @@ cd $SCRIPTPATH
 cp *lua $osrmdir
 cp $osrmdir/oma-foot.lua $osrmdir/oma-test.lua
 
-#upgrade_osrm car; exit;
-#upgrade_osrm test; exit;
+#upgrade_osrm foot; exit;
+#upgrade_osrm ski; exit;
 
 
 # todo: preferuj cervenu pred modrou
@@ -86,6 +86,7 @@ cp osrm-backend/profiles/car.lua oma-car.lua
 cp oma-foot.lua oma-test.lua
 upgrade_osrm test
 
+upgrade_osrm ski
 upgrade_osrm bicycle
 upgrade_osrm car
 upgrade_osrm foot
