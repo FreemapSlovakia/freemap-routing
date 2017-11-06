@@ -54,7 +54,7 @@ var map = new mapboxgl.Map({
     container: "map",
     style: simple,
     zoom: 14,
-    center: [17.1180, 48.1451]
+    center: ['.getcgi('lat',17.1180).', '.getcgi('lon', 48.1451).']
 });
 ';
 ?>
