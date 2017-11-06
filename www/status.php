@@ -24,11 +24,14 @@ echo '<li>foot - peší pohyb, turistika v prírode aj v meste ('.implode($class
 ';
 
 foreach($speed as $typ => $c) {
-	$url="https://routing.epsilon.sk/table/v1/$typ/17.1,48.144;19.157,48.74;21.25,48.71?sources=0";
+	$url="routing.epsilon.sk/table/v1/$typ/17.1,48.144;19.157,48.74;21.25,48.71?sources=0";
 	echo "<li>speed profil $typ: "; 
-	$t = json_decode(file_get_contents($url));//print_r($t);
+	$t = json_decode(file_get_contents("https://$url"));
 	foreach($t->durations[0] as $k => $v) if($k != 0) echo "$v s (".round($v/3600,2)."h), ";
 	//if(is_array($classes[$typ])) foreach($classes[$typ] as $class) echo "<a href='$url&amp;exclude=$class'>exclude $class</a>, ";
+	echo "[tanicka: ";
+	$t = json_decode(file_get_contents("http://local.$url")); foreach($t->durations[0] as $k => $v) if($k != 0) echo "$v s (".round($v/3600,2)."h), ";
+	echo "]";
 	echo "</li>\n";
 }
 // ci bezi https://routing.epsilon.sk/table/v1/foot/17.1,48.144;19.157,48.74;21.25,48.71?sources=0 - ba : bb -ke
