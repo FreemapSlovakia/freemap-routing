@@ -10,26 +10,30 @@ function WayHandlers.skiaerialway(profile,way,result,data)
     if not data.aerialway or data.aerialway =='' then 
 		return;
     end
+	result.forward_speed=15; result.forward_rate=15;
+	result.backward_mode = mode.inaccessible;
     -- station, goods
     if data.aerialway == 'gondola' or data.aerialway == 'cable_car' or data.aerialway == 'mixed_lift' then
 		result.forward_classes['gondola'] = true;
+		result.backward_mode = mode.ferry;
+		result.backward_speed=result.forward_speed; result.backward_rate=result.backward_speed/10;
     elseif data.aerialway == 'chair_lift' then
         result.forward_classes['chairlift'] = true;
     elseif data.aerialway == 't-bar' or data.aerialway == 'j-bar' or data.aerialway == 'platter' or data.aerialway == 'drag_lift' then
         result.forward_classes['platter'] = true;
+		result.backward_rate=result.backward_speed/4;
 	elseif data.aerialway == 'rope_tow' or data.aerialway == 'zip_line' or data.aerialway == 'magic_carpet' then 
 		result.forward_classes['child'] = true;
+		result.backward_rate=result.backward_speed/4;
     else 
 		-- remaining: goods, station, pilon, yes
 		--print(data.aerialway);
-		return
+		result.forward_mode = mode.inaccessible;
+		return false;
     end
-    result.forward_speed=15;
-    result.forward_rate=15;
     result.forward_mode = mode.ferry;
 	result.name = result.name .. ' L';
 	-- todo: add duration tag from way data
-    result.backward_mode = mode.inaccessible;
 end
 
 function WayHandlers.skipiste(profile,way,result,data)
@@ -58,7 +62,7 @@ end
 function setup()
   return {
     properties = {
-	 weight_name = 'duration',
+		weight_name = 'routability',
     }, 
     default_mode = mode.ferry,
     default_speed = 30,
@@ -75,7 +79,7 @@ function setup()
 		Set {'nordic'}
     },
     relation_types = Sequence {
-      "route"
+      "route", "piste:type"
     }
   }
 end
@@ -85,15 +89,18 @@ function process_way(profile, way, result, relations)
 	aerialway = way:get_value_by_key('aerialway'),
 	piste = way:get_value_by_key('piste:type')
     }
+	if way:get_value_by_key('railway') == 'funicular' then
+		data.aerialway = 'gondola'
+	end
     if ( not data.aerialway or data.aerialway =='') and ( not data.piste or data.piste == '') then
 	return
     end
     handlers = Sequence {
-	WayHandlers.default_mode,
-	WayHandlers.names,
-	--WayHandlers.oneway,
-	WayHandlers.skiaerialway,
-	WayHandlers.skipiste
+		WayHandlers.default_mode,
+		WayHandlers.names,
+		--WayHandlers.oneway,
+		WayHandlers.skiaerialway,
+		WayHandlers.skipiste
     }
     WayHandlers.run(profile, way, result, data, handlers, relations)
 end
