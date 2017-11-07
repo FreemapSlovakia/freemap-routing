@@ -21,10 +21,10 @@ function WayHandlers.skiaerialway(profile,way,result,data)
         result.forward_classes['chairlift'] = true;
     elseif data.aerialway == 't-bar' or data.aerialway == 'j-bar' or data.aerialway == 'platter' or data.aerialway == 'drag_lift' then
         result.forward_classes['platter'] = true;
-		result.backward_rate=result.backward_speed/4;
+		result.forward_rate=result.forward_speed/4;
 	elseif data.aerialway == 'rope_tow' or data.aerialway == 'zip_line' or data.aerialway == 'magic_carpet' then 
 		result.forward_classes['child'] = true;
-		result.backward_rate=result.backward_speed/4;
+		result.forward_rate=result.forward_speed/4;
     else 
 		-- remaining: goods, station, pilon, yes
 		--print(data.aerialway);
