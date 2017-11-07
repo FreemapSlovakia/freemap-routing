@@ -12,6 +12,11 @@ function WayHandlers.skiaerialway(profile,way,result,data)
     end
 	result.forward_speed=15; result.forward_rate=15;
 	result.backward_mode = mode.inaccessible;
+	-- duration of gondolas
+	local duration  = way:get_value_by_key("duration")
+	if duration and durationIsValid(duration) then
+		result.duration = math.max( parseDuration(duration), 1 )
+	end
     -- station, goods
     if data.aerialway == 'gondola' or data.aerialway == 'cable_car' or data.aerialway == 'mixed_lift' then
 		result.forward_classes['gondola'] = true;
