@@ -7,9 +7,9 @@ Handlers = require("lib/way_handlers")
 Relations = require("lib/relations")
 
 function WayHandlers.skiaerialway(profile,way,result,data)
-    if not data.aerialway or data.aerialway =='' then 
+	if not data.aerialway or data.aerialway =='' then 
 		return;
-    end
+	end
 	result.forward_speed=15; result.forward_rate=15;
 	result.backward_mode = mode.inaccessible;
 	-- duration of gondolas
@@ -17,52 +17,64 @@ function WayHandlers.skiaerialway(profile,way,result,data)
 	if duration and durationIsValid(duration) then
 		result.duration = math.max( parseDuration(duration), 1 )
 	end
-    -- station, goods
-    if data.aerialway == 'gondola' or data.aerialway == 'cable_car' or data.aerialway == 'mixed_lift' then
-		result.forward_classes['gondola'] = true;
+	-- station, goods
+	if data.aerialway == 'gondola' or data.aerialway == 'cable_car' or data.aerialway == 'mixed_lift' then
+		result.forward_classes['gondola'] = true; result.backward_classes['gondola'] = true;
 		result.backward_mode = mode.ferry;
 		result.backward_speed=result.forward_speed; result.backward_rate=result.backward_speed/10;
-    elseif data.aerialway == 'chair_lift' then
-        result.forward_classes['chairlift'] = true;
-    elseif data.aerialway == 't-bar' or data.aerialway == 'j-bar' or data.aerialway == 'platter' or data.aerialway == 'drag_lift' then
-        result.forward_classes['platter'] = true;
+	elseif data.aerialway == 'chair_lift' then
+		result.forward_classes['chairlift'] = true;
+	elseif data.aerialway == 't-bar' or data.aerialway == 'j-bar' or data.aerialway == 'platter' or data.aerialway == 'drag_lift' then
+		result.forward_classes['platter'] = true;
 		result.forward_rate=result.forward_speed/4;
 	elseif data.aerialway == 'rope_tow' or data.aerialway == 'zip_line' or data.aerialway == 'magic_carpet' then 
 		result.forward_classes['child'] = true;
 		result.forward_rate=result.forward_speed/4;
-    else 
+	else 
 		-- remaining: goods, station, pilon, yes
 		--print(data.aerialway);
 		result.forward_mode = mode.inaccessible;
 		return false;
-    end
-    result.forward_mode = mode.ferry;
+	end
+	result.forward_mode = mode.ferry;
 	result.name = result.name .. ' ⇈';
-	-- todo: add duration tag from way data
 end
 
 function WayHandlers.skipiste(profile,way,result,data)
 	-- piste: downhill, foot (for foot transfer between stations)
-    if not data.piste or data.piste =='' then
-        return;
-    end
+	if not data.piste or data.piste == '' then
+		return;
+	end
 	-- remove piste that are areas, ususally not good for routing
-    if way:get_value_by_key('area') == 'yes' then
+	if way:get_value_by_key('area') == 'yes' then
 		return false;
-    end
-    result.forward_speed=30;
-    result.forward_rate=30;
-    result.forward_mode = mode.driving;
-	result.name = result.name .. ' ⟿';
+	end
 	if data.piste == 'foot' then
-		result.forward_speed=3; result.forward_rate=3;
-		result.backward_speed=3; result.backward_rate=3;
-		result.backward_mode = mode.driving;
-	else
-	    result.backward_mode = mode.inaccessible;
+                result.forward_speed=3; result.forward_rate=3;
+                result.backward_speed=3; result.backward_rate=3;
+                result.backward_mode = mode.driving; result.forward_mode = mode.driving;
+		result.name = result.name .. ' ⋯';
+		return;
+	end
+	if data.piste == 'downhill' then
+		result.forward_speed=30; result.forward_rate=30;
+		result.forward_mode = mode.driving;
+		result.name = result.name .. ' ⟿';
+		result.backward_mode = mode.inaccessible;
+		-- todo: class dificulty
+		return;
 	end
 end
 
+function WayHandlers.skinordic(profile,way,result,data)
+	if not data.piste == 'nordic' then
+		return
+	end
+	result.forward_speed=5; result.forward_rate=5;
+	result.backward_speed=5; result.backward_rate=5;
+	result.backward_mode = mode.driving; result.forward_mode = mode.driving;
+	result.forward_classes['nordic'] = true; result.backward_classes['nordic'] = true;
+end
 
 function setup()
   return {
