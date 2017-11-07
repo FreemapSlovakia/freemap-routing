@@ -32,7 +32,7 @@ function WayHandlers.skiaerialway(profile,way,result,data)
 		return false;
     end
     result.forward_mode = mode.ferry;
-	result.name = result.name .. ' L';
+	result.name = result.name .. ' ⇈';
 	-- todo: add duration tag from way data
 end
 
@@ -48,7 +48,7 @@ function WayHandlers.skipiste(profile,way,result,data)
     result.forward_speed=30;
     result.forward_rate=30;
     result.forward_mode = mode.driving;
-	result.name = result.name .. ' Z';
+	result.name = result.name .. ' ⟿';
 	if data.piste == 'foot' then
 		result.forward_speed=3; result.forward_rate=3;
 		result.backward_speed=3; result.backward_rate=3;
