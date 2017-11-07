@@ -37,5 +37,6 @@ foreach($speed as $typ => $c) {
 // ci bezi https://routing.epsilon.sk/table/v1/foot/17.1,48.144;19.157,48.74;21.25,48.71?sources=0 - ba : bb -ke
 
 ?>
+<li><a href="https://routing.epsilon.sk/debug.php?profil=ski&speed=speed&speeds=10,20&colors=blue,green,red&lon=48.94276&lat=19.59249">ski chopok</a></li>
 </ul>
 </body></html>
