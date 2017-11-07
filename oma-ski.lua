@@ -21,11 +21,13 @@ function WayHandlers.skiaerialway(profile,way,result,data)
 		result.forward_classes['child'] = true;
     else 
 		-- remaining: goods, station, pilon, yes
-		print(data.aerialway);
+		--print(data.aerialway);
+		return
     end
     result.forward_speed=15;
     result.forward_rate=15;
     result.forward_mode = mode.ferry;
+	result.name = result.name .. ' L';
 	-- todo: add duration tag from way data
     result.backward_mode = mode.inaccessible;
 end
@@ -42,8 +44,10 @@ function WayHandlers.skipiste(profile,way,result,data)
     result.forward_speed=30;
     result.forward_rate=30;
     result.forward_mode = mode.driving;
+	result.name = result.name .. ' Z';
 	if data.piste == 'foot' then
 		result.forward_speed=3; result.forward_rate=3;
+		result.backward_speed=3; result.backward_rate=3;
 		result.backward_mode = mode.driving;
 	else
 	    result.backward_mode = mode.inaccessible;
