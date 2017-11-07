@@ -28,26 +28,17 @@ start() {
 }
 
 stop() {
-  if [ ! -f "$PIDFILE" ] || ! kill -0 $(cat "$PIDFILE"); then
-    echo 'Service not running' >&2
-    return 1
-  fi
+  #if [ ! -f "$PIDFILE" ] || ! kill -0 $(cat "$PIDFILE"); then
+  #  echo 'Service not running' >&2
+  #  return 1
+  #fi
   echo 'Stopping service…' >&2
+  kill `ps ax |grep osrm-daemon| grep -v grep | sed 's/? .*//'`
+  sleep 2
+  kill `ps ax |grep osrm-routed| grep -v grep | sed 's/? .*//'`
+  rm -f "$PIDFILE"
   kill -15 $(cat "$PIDFILE") && rm -f "$PIDFILE"
   echo 'Service stopped' >&2
-}
-
-uninstall() {
-  echo -n "Are you really sure you want to uninstall this service? That cannot be undone. [yes|No] "
-  local SURE
-  read SURE
-  if [ "$SURE" = "yes" ]; then
-    stop
-    rm -f "$PIDFILE"
-    echo "Notice: log file is not be removed: '$LOGFILE'" >&2
-    update-rc.d -f osrm-daemom remove
-    rm -fv "$0"
-  fi
 }
 
 case "$1" in
@@ -55,21 +46,15 @@ case "$1" in
     start
     ;;
   stop)
-    kill `ps ax |grep osrm-daemon| grep -v grep | sed 's/? .*//'`
-    sleep 2
-    killall -r osrm-routed
-	rm -f "$PIDFILE"
-    ;;
-  uninstall)
-    uninstall
+    stop
     ;;
   reload)
-	killall -r osrm-routed
+	kill `ps ax |grep osrm-routed| grep -v grep | sed 's/? .*//'`
 	;;
   retart)
     stop
     start
     ;;
   *)
-    echo "Usage: $0 {start|stop|restart|uninstall}"
+    echo "Usage: $0 {start|stop|restart|reload}"
 esac
