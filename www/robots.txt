@@ -1,0 +1,5 @@
+User-agent: *
+Crawl-delay: 6
+Disallow: /admin/
+Disallow: /editor/
+Disallow: /wp-admin/
