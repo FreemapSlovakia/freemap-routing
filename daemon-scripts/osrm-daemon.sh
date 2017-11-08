@@ -33,9 +33,9 @@ stop() {
   #  return 1
   #fi
   echo 'Stopping service…' >&2
-  kill `ps ax |grep osrm-daemon| grep -v grep | sed 's/? .*//'`
+  pkill -f osrm-daemon
   sleep 2
-  kill `ps ax |grep osrm-routed| grep -v grep | sed 's/? .*//'`
+  pkill -f osrm-routed
   rm -f "$PIDFILE"
   kill -15 $(cat "$PIDFILE") && rm -f "$PIDFILE"
   echo 'Service stopped' >&2
