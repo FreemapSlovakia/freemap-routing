@@ -20,11 +20,11 @@ echo '<li>foot - peší pohyb, turistika v prírode aj v meste ('.implode($class
 <li>posledné načítanie OSM dát: '.file_get_contents('last-mod-data').'</li>
 </ul>
 <h2>Funkčnosť servera</h2><ul>
-<li>vzdialenosť v sekundách z BA do BB a KE</li>
+<li>vzdialenosť v sekundách z BA do Pezinskej baby, BB a KE</li>
 ';
 
 foreach($speed as $typ => $c) {
-	$url="routing.epsilon.sk/table/v1/$typ/17.1,48.144;19.157,48.74;21.25,48.71?sources=0";
+	$url="routing.epsilon.sk/table/v1/$typ/17.1,48.144;17.18811,48.33229;19.157,48.74;21.25,48.71?sources=0";
 	echo "<li>speed profil $typ: "; 
 	$t = json_decode(file_get_contents("https://$url"));
 	foreach($t->durations[0] as $k => $v) if($k != 0) echo round($v)."s (".round($v/3600,2)."h), ";
