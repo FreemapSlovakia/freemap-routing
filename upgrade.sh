@@ -17,7 +17,7 @@ fi
 cd osrm-backend
 mkdir -p build
 cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release
+cmake .. -DCMAKE_BUILD_TYPE=Release #-DENABLE_STXXL=On
 cmake --build .
 cd ../../
 echo " ";
