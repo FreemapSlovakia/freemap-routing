@@ -124,6 +124,16 @@ function process_way(profile, way, result, relations)
 			end
 		end
 	end
+	-- if data.piste is still not set, every way in route=ski is piste:type=nordic
+    if not data.piste or data.piste == '' then
+        local rel_id_list = relations:get_relations(way)
+        for i, rel_id in ipairs(rel_id_list) do
+            local rel = relations:relation(rel_id);
+            if rel:get_value_by_key("route") == 'ski' then
+                data.piste = 'nordic';
+            end
+        end
+    end
 
 	if ( not data.aerialway or data.aerialway =='') and ( not data.piste or data.piste == '') then
 		return
