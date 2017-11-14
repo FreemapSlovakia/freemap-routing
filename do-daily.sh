@@ -7,9 +7,9 @@ cd $SCRIPTPATH
 date
 out=" starting:\t`date`"
 
-#update_planet > /dev/null
-#crop_bigslovakia > /dev/null
-#upgrade_osrm car > /dev/null
+update_planet > /dev/null
+crop_bigslovakia > /dev/null
+upgrade_osrm car > /dev/null
 
 rm $datadir/tmp-ski/bigslovakia.pbf
 out="$out,get pistes:\t`date`"
