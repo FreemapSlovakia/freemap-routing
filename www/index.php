@@ -14,10 +14,11 @@
 <?php
 include('maps.php');
 
-echo '<li>foot - peší pohyb, turistika v prírode aj v meste ('.implode($classes['foot'], ', ').'), posledný update '.file_get_contents('last-mod-foot').'</li>
+echo '<li>posledné OSM dáta sú z '.file_get_contents('last-mod-data').' (ale niektoré profily môžu byť spracované skôr), <a href="status.php">status servera</a>, dáta sú spracovné za SR a okolie</li>
+<li>foot - peší pohyb, turistika v prírode aj v meste ('.implode($classes['foot'], ', ').'), posledný update '.file_get_contents('last-mod-foot').'</li>
 <li>bike - mestský alebo trekking bicykel ('.implode($classes['bike'],', ').'), posledný update '.file_get_contents('last-mod-bicycle').'</li>
 <li>car - auto ('.implode($classes['car'], ', ').'), posledný update '.file_get_contents('last-mod-car').'</li>
-<li>posledné načítanie OSM dát: '.file_get_contents('last-mod-data').', <a href="status.php">status servera</a></li>
+<li>ski - zjazdové lyžovanie a bežkovanie ('.implode($classes['ski'], ', ').'), posledný update '.file_get_contents('last-mod-ski').' - pokrytie: celý svet</li>
 </ul>
 <h2>Legenda debugu</h2><ul>
 ';
