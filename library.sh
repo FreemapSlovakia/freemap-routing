@@ -54,25 +54,15 @@ cp *lua $osrmdir
 cp $osrmdir/osrm-backend/profiles/car.lua $osrmdir/oma-car.lua
 cp $osrmdir/oma-foot.lua $osrmdir/oma-test.lua
 
-#upgrade_osrm foot; exit;
-#upgrade_osrm ski; exit;
-
 crop_bigslovakia() {
-	#d=`date --date="today" +"%g%m%d"`
-	#scp -p -P 21122 92.240.244.41:/freemap/datastore.fm/httpd/dev/tmp/osmosis/planet/bigslovakia$d.pbf $datadir/ttt.pbf
-	#stat -c %y $planetdir/planet-latest.osm.pbf |sed 's/\..*//' > /home/izsk/weby/epsilon.sk/routing/last-mod-data
-	#bbox=`echo "select concat('bottom=', round(st_ymin(w)::numeric,3), ' left=', round(st_xmin(w)::numeric,3), ' top=', round(st_ymax(w)::numeric,3), ' right=', round(st_xmax(w)::numeric,3)) from (select st_collect(geometry(p)) as w from t_elevation) as t ;" | psql -t $dbname`
-	#osmosis --read-pbf file="$datadir/ttt.pbf" --bounding-box $bbox --write-pbf file="$datadir/bigslovakia.pbf"
 	bbox=` echo "select concat('', round(st_xmin(w)::numeric,3), ',', round(st_ymin(w)::numeric,3), ',', round(st_xmax(w)::numeric,3), ',', round(st_ymax(w)::numeric,3)) from (select st_collect(geometry(p)) as w from t_elevation) as t ;" | psql -t $dbname`
 	rm $datadir/bigslovakia.pbf
 	osmium extract -b $bbox $planetdir/planet-latest.osm.pbf -o $datadir/bigslovakia.pbf
-	#rm $datadir/ttt.pbf
 	osmium fileinfo --no-progress -e $datadir/bigslovakia.pbf |grep Last| sed 's/.*: //' > /home/izsk/weby/epsilon.sk/routing/last-mod-data
 }
 
 test_file() {
 	rm $datadir/bratislava.pbf
-	#osmosis --read-pbf file="$datadir/bigslovakia.pbf" --bounding-box bottom=47.96 left=16.9 top=48.3 right=17.33 --write-pbf file="$datadir/bratislava.pbf"
 	osmium extract -b 16.9,47.96,17.33,48.3 $datadir/bigslovakia.pbf -o $datadir/bratislava.pbf
 }
 
@@ -92,12 +82,3 @@ postgis_import() {
 	echo "delete from ${prefix}_polygon where osm_id not in (select osm_id from ${prefix}_polygon where landuse in ('industrial', 'garages', 'construction','brownfield','landfill', 'quary',  'village_green','grass','meadow', 'forest', 'vineyard', 'orchard') or \"natural\" in ('wood') or leisure in ('park') )" |psql $dbname
 	vacuumdb --full -t ${prefix}_line -t ${prefix}_polygon $dbname
 }
-
-#download_bigslovakia
-#upgrade_osrm ski
-#upgrade_osrm car
-#postgis_import;
-#test_file; upgrade_osrm test
-#upgrade_osrm bicycle
-#upgrade_osrm foot
-
