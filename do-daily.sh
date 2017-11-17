@@ -17,6 +17,9 @@ osmium tags-filter $planetdir/planet-latest.osm.pbf wr/route=ski wr/piste:type w
 
 small=10
 upgrade_osrm ski > /dev/null
+small=100
+upgrade_osrm train > /dev/null
+
 
 out="$out,end: `date`"
 #echo $out

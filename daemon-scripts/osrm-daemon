@@ -4,4 +4,5 @@ while :; do osrm-routed-foot -p 5000 /home/ssd/osrm/foot/bigslovakia.osrm > /dev
 while :; do osrm-routed-test -p 5002 /home/ssd/osrm/test/bratislava.osrm > /dev/null; done &
 while :; do osrm-routed-car -p 5003 /home/ssd/osrm/car/bigslovakia.osrm > /dev/null ; done  &
 while :; do osrm-routed-ski -p 5004 /home/ssd/osrm/ski/bigslovakia.osrm > /dev/null ; done  &
+while :; do osrm-routed-train -p 5005 /home/ssd/osrm/train/bigslovakia.osrm > /dev/null ; done  &
 
