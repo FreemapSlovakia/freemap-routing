@@ -105,6 +105,18 @@ function setup()
   }
 end
 
+function get_from_rel(relations, way, key, value, ret)
+	-- if any of way's relation have key=value, return tag ret; else return NULL
+	local rel_id_list = relations:get_relations(way)
+	for i, rel_id in ipairs(rel_id_list) do
+		local rel = relations:relation(rel_id);
+		local p = rel:get_value_by_key(key);
+		if value == '*' and p then return rel:get_value_by_key(ret); end
+		if p == value then return rel:get_value_by_key(ret); end
+	end
+	return nil;
+end
+
 function process_way(profile, way, result, relations)
     local data = {
 	aerialway = way:get_value_by_key('aerialway'),
@@ -113,27 +125,10 @@ function process_way(profile, way, result, relations)
 	if way:get_value_by_key('railway') == 'funicular' then
 		data.aerialway = 'gondola'
 	end
-	-- data.piste from relation
-	if not data.piste or data.piste == '' then
-		local rel_id_list = relations:get_relations(way)
-		for i, rel_id in ipairs(rel_id_list) do
-			local rel = relations:relation(rel_id);
-			local p = rel:get_value_by_key("piste:type");
-			if p then
-				data.piste = p;
-			end
-		end
-	end
+	-- data.piste from relation's piste:type
+	if not data.piste then data.piste = get_from_rel(relations, way, "piste:type", '*', "piste:type"); end
 	-- if data.piste is still not set, every way in route=ski is piste:type=nordic
-    if not data.piste or data.piste == '' then
-        local rel_id_list = relations:get_relations(way)
-        for i, rel_id in ipairs(rel_id_list) do
-            local rel = relations:relation(rel_id);
-            if rel:get_value_by_key("route") == 'ski' then
-                data.piste = 'nordic';
-            end
-        end
-    end
+	if not data.piste and get_from_rel(relations, way, "route", 'ski', "route") then data.piste='nordic'; end
 
 	if ( not data.aerialway or data.aerialway =='') and ( not data.piste or data.piste == '') then
 		return
