@@ -35,8 +35,11 @@ function setup()
     excludable = Sequence {
         Set {'night'},
         Set {'stroller'},
-        Set {'mud'}
+        Set {'mud'},
+		Set {'night', 'stroller'},Set {'night','stroller','mud'},
+		Set {'stroller','mud'}
     },
+
     unsafe_highway = Set { 'primary', 'primary_link', 'secondary', 'secondary_link', 'tertiary', 'tertiary_link', 'unclassified' },
     medium_highway = Set { 'residential', 'road', 'service' },
 
