@@ -115,6 +115,7 @@ function setup()
         steps           = walking_speed/2,
         pedestrian      = walking_speed,
         footway         = walking_speed,
+		platform        = walking_speed,
         pier            = walking_speed,
       },
 
