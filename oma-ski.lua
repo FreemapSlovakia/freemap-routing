@@ -37,7 +37,7 @@ function WayHandlers.skiaerialway(profile,way,result,data)
 		return false;
 	end
 	result.forward_mode = mode.ferry;
-	result.name = result.name .. ' ⇈';
+	result.name = result.name .. ' 🚡';
 end
 
 function WayHandlers.skipiste(profile,way,result,data)
@@ -52,16 +52,17 @@ function WayHandlers.skipiste(profile,way,result,data)
 	if data.piste == 'foot' then
                 result.forward_speed=3; result.forward_rate=3;
                 result.backward_speed=3; result.backward_rate=3;
-                result.backward_mode = mode.driving; result.forward_mode = mode.driving;
-		result.name = result.name .. ' ⋯';
+                result.backward_mode = mode.walking; result.forward_mode = mode.walking;
+		result.name = result.name .. ' 🚶';
 		return result;
 	end
 	if data.piste == 'downhill' then
 		result.forward_speed=30; result.forward_rate=30;
 		result.forward_mode = mode.driving;
-		result.name = result.name .. ' ⟿';
+		result.name = result.name .. ' ⛷';
+		result.backward_ref = '🚶';
 		result.backward_speed = 1/10; result.backward_rate = 1/100;
-		result.backward_mode = mode.driving;
+		result.backward_mode = mode.walking;
 		-- todo: class dificulty
 		return result;
 	end
@@ -78,6 +79,13 @@ function WayHandlers.skinordic(profile,way,result,data)
 	result.forward_classes['nordic'] = true; result.backward_classes['nordic'] = true;
 	end
 end
+
+function WayHandlers.namesfromrelations(profile,way,result,data,relations)
+	if not result.name or result.name == '' then result.name = get_from_rel(relations, way, "piste:type", '*', "name"); end
+	if not result.name or result.name == '' then result.name = get_from_rel(relations, way, "piste:type", '*', "ref"); end
+	if not result.name or result.name == '' then result.name = get_from_rel(relations, way, "route", 'ski', "name"); end
+end
+
 
 function setup()
   return {
@@ -136,6 +144,7 @@ function process_way(profile, way, result, relations)
 	handlers = Sequence {
 		WayHandlers.default_mode,
 		WayHandlers.names,
+		WayHandlers.namesfromrelations,
 		--WayHandlers.oneway,
 		WayHandlers.skiaerialway,
 		WayHandlers.skipiste,
