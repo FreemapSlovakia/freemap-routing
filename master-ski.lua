@@ -5,6 +5,7 @@ Set = require('lib/set')
 Sequence = require('lib/sequence')
 Handlers = require("lib/way_handlers")
 Relations = require("lib/relations")
+--require("segments-ski");
 
 function WayHandlers.skiaerialway(profile,way,result,data)
 	if not data.aerialway or data.aerialway =='' then 
@@ -146,9 +147,8 @@ function process_way(profile, way, result, relations)
 		WayHandlers.names,
 		WayHandlers.namesfromrelations,
 		--WayHandlers.oneway,
-		WayHandlers.skiaerialway,
-		WayHandlers.skipiste,
-		WayHandlers.skinordic
+		WayHandlers.skiaerialway, WayHandlers.skipiste, -- grep piste
+		WayHandlers.skinordic, -- grep nordic
 	}
 	WayHandlers.run(profile, way, result, data, handlers, relations)
 end

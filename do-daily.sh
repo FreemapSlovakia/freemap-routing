@@ -14,9 +14,15 @@ upgrade_osrm car > /dev/null
 rm $datadir/tmp-ski/bigslovakia.pbf
 out="$out,get pistes: `date`"
 osmium tags-filter $planetdir/planet-latest.osm.pbf wr/route=ski wr/piste:type wr/aerialway -o $datadir/tmp-ski/bigslovakia.pbf > /dev/null
+cp $datadir/tmp-ski/bigslovakia.pbf $datadir/tmp-nordic/bigslovakia.pbf
+ls -lh $datadir/tmp-nordic/bigslovakia.pbf
 
 small=10
+cat master-ski.lua | grep -v 'grep nordic' > $osrmdir/oma-ski.lua
 upgrade_osrm ski > /dev/null
+cat master-ski.lua | grep -v 'grep piste' > $osrmdir/oma-nordic.lua
+upgrade_osrm nordic > /dev/null
+
 small=100
 upgrade_osrm train > /dev/null
 
