@@ -210,7 +210,8 @@ function process_way(profile, way, result)
     amenity = way:get_value_by_key('amenity'),
     public_transport = way:get_value_by_key('public_transport')
   }
-
+  -- relation only ways
+  if route_ways[way:id()] then data.highway = route_ways[way:id()]; end
   -- perform an quick initial check and abort if the way is
   -- obviously not routable. here we require at least one
   -- of the prefetched tags to be present, ie. the data table
