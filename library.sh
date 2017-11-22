@@ -13,6 +13,8 @@ datadir='/home/ssd/osrm'
 osrmdir='/home/vseobecne/ine/osrmv5'
 planetdir='/home/extra/tmp'
 
+export osrmdir;
+
 small=1000
 
 update_planet() {
