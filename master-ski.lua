@@ -47,7 +47,7 @@ function WayHandlers.skipiste(profile,way,result,data)
 		return;
 	end
 	-- remove piste that are areas, ususally not good for routing
-	if way:get_value_by_key('area') == 'yes' then
+	if way:get_value_by_key('area') == 'yes' or  way:get_value_by_key('leisure') == 'sports_centre' then
 		return false;
 	end
 	if data.piste == 'foot' then
