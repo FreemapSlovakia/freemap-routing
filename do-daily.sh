@@ -11,7 +11,7 @@ update_planet > /dev/null
 crop_bigslovakia > /dev/null
 upgrade_osrm car > /dev/null
 
-rm $datadir/tmp-ski/bigslovakia.pbf
+if [ -r $datadir/tmp-ski/bigslovakia.pbf ]; then rm $datadir/tmp-ski/bigslovakia.pbf; fi
 out="$out,get pistes: `date`"
 osmium tags-filter $planetdir/planet-latest.osm.pbf wr/route=ski wr/piste:type wr/aerialway -o $datadir/tmp-ski/bigslovakia.pbf > /dev/null
 cp $datadir/tmp-ski/bigslovakia.pbf $datadir/tmp-nordic/bigslovakia.pbf
