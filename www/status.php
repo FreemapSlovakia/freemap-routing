@@ -25,7 +25,7 @@ echo '<li>posledné OSM dáta sú z '.file_get_contents('last-mod-data').' (ale 
 ';
 
 foreach($speed as $typ => $c) {
-	$url="routing.epsilon.sk/table/v1/$typ/17.1,48.144;17.18811,48.33229;19.157,48.74;21.25,48.71?sources=0";
+	$url="routing.epsilon.sk/table/v1/$typ/17.109404,48.164482;17.18811,48.33229;19.157,48.74;21.27689,48.71772?sources=0";
 	echo "<li>speed profil $typ: "; 
 	$t = json_decode(file_get_contents("https://$url"));
 	foreach($t->durations[0] as $k => $v) if($k != 0) echo round($v)."s (".round($v/3600,2)."h), ";
