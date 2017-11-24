@@ -11,7 +11,7 @@ dbname='mapnik';
 prefix='osrm_osm';
 datadir='/home/ssd/osrm'
 osrmdir='/home/vseobecne/ine/osrmv5'
-planetdir='/home/extra/tmp'
+planetdir=$datadir
 
 export osrmdir;
 
