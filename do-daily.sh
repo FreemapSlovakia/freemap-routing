@@ -9,6 +9,7 @@ out=" starting: `date`"
 
 update_planet > /dev/null
 crop_bigslovakia > /dev/null
+test_file > /dev/null
 upgrade_osrm car > /dev/null
 
 if [ -r $datadir/tmp-ski/bigslovakia.pbf ]; then rm $datadir/tmp-ski/bigslovakia.pbf; fi
