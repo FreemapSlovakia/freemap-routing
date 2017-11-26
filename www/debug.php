@@ -53,7 +53,7 @@ echo ']
 var map = new mapboxgl.Map({
     container: "map",
     style: simple,
-    zoom: '.getcgi('zoom',16).',
+    zoom: '.getcgi('zoom',15).',
     center: ['.getcgi('lon',17.1180).', '.getcgi('lat', 48.1451).']
 });
 ';
