@@ -20,5 +20,11 @@ $classes['car'] = array('motorway','toll');
 // $classes['bike'] = array('night','mud','major'); - not implemented yet
 $classes['foot'] = array('stroller','mud','night');
 
+$names['foot'] = 'peší pohyb, turistika v prírode aj v meste';
+$names['bike'] = 'mestský alebo trekking bicykel';
+$names['car'] = 'auto';
+$names['ski'] = 'zjazdové lyžovanie, vleky, lanovky a zjazdovky, pokrytie celého sveta';
+$names['nordic'] = "bežkovanie, pokrytie celého sveta";
+$names['train'] = "vlaky, električky a šaliny";
 
 ?>
