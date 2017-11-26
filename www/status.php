@@ -14,12 +14,10 @@
 <?php
 include('maps.php');
 
-echo '<li>posledné OSM dáta sú z '.file_get_contents('last-mod-data').' (ale niektoré profily môžu byť spracované skôr), <a href="status.php">status servera</a>, dáta sú spracovné za SR a okolie</li>
-<li>foot - peší pohyb, turistika v prírode aj v meste ('.implode($classes['foot'], ', ').'), posledný update '.file_get_contents('last-mod-foot').'</li>
-<li>bike - mestský alebo trekking bicykel ('.implode($classes['bike'],', ').'), posledný update '.file_get_contents('last-mod-bicycle').'</li>
-<li>car - auto ('.implode($classes['car'], ', ').'), posledný update '.file_get_contents('last-mod-car').'</li>
-<li>ski - zjazdové lyžovanie a bežkovanie ('.implode($classes['ski'], ', ').'), posledný update '.file_get_contents('last-mod-ski').' - pokrytie: celý svet</li>
-</ul>
+echo '<li>posledné OSM dáta sú z '.file_get_contents('last-mod-data').' (ale niektoré profily môžu byť spracované skôr), <a href="status.php">status servera</a>, dáta sú spracovné za SR a okolie</li>';
+foreach($names as $k => $v) echo "<li>$k - $v".(is_array($classes[$k]) ? ' ('.implode($classes[$k], ', ').')':'').", posledné dáta z ".file_get_contents("last-mod-$k")."</li>\n";
+
+echo '</ul>
 <h2>Funkčnosť servera</h2><ul>
 <li>vzdialenosť v sekundách z BA do Pezinskej baby, BB a KE</li>
 ';
