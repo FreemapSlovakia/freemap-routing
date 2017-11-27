@@ -8,10 +8,9 @@ date
 out=" starting:\t`date`"
 
 #download data - done by daily script
-postgis_import;
-test_file; upgrade_osrm test
-upgrade_osrm bicycle
-upgrade_osrm foot
+postgis_import; upgrade_osrm bicycle
+# probably there are new data available
+postgis_import; upgrade_osrm foot
 
 out="$out,end:\t`date`"
 echo $out | sed 's/,/\n/g'
