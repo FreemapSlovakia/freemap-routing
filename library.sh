@@ -67,6 +67,13 @@ crop_bigslovakia() {
 	osmium extract -b $bbox $planetdir/planet-latest.osm.pbf -o $datadir/bigslovakia.pbf
 	osmium fileinfo --no-progress -e $datadir/bigslovakia.pbf |grep Last| sed 's/.*: //' > /home/izsk/weby/epsilon.sk/routing/last-mod-data
 }
+crop_slovakia() {
+	# mimic behaviour of download.geofabric
+	cd $datadir
+	#wget http://download.geofabrik.de/europe/slovakia.poly
+	mv slovakia.pbf slovakia.pbf-old
+	osmium extract -p slovakia.poly bigslovakia.pbf -o slovakia.pbf
+}
 
 test_file() {
 	rm $datadir/bratislava.pbf
