@@ -12,6 +12,7 @@ prefix='osrm_osm';
 datadir='/home/ssd/osrm'
 osrmdir='/home/vseobecne/ine/osrmv5'
 planetdir=$datadir
+f='bigslovakia'
 
 export osrmdir;
 
@@ -22,40 +23,43 @@ update_planet() {
 	/usr/bin/pyosmium-up-to-date -v --server https://planet.osm.org/replication/day/ planet-latest.osm.pbf
 }
 
+upgrade_remote() {
+	profile=$1;
+	# copy do live server
+    scp $datadir/$profile/* 10.9.0.1:$datadir/tmp-$profile/
+    if [ $? -ne 0 ]; then return 1; fi
+    scp /usr/local/bin/osrm-routed-$profile 10.9.0.1:
+    ssh 10.9.0.1 "rm $datadir/$profile/* && mv $datadir/tmp-$profile/* $datadir/$profile/ && cp -f ~/osrm-routed-$profile /usr/local/bin/ && killall osrm-routed-$profile";
+    oma f epsilon.sk/routing
+}
+
+upgrade_local() {
+	profile=$1;
+	#f='bigslovakia';
+	rm $datadir/$profile/* && mv $datadir/tmp-$profile/*.osrm* $datadir/$profile/ && cp -f /usr/local/bin/osrm-routed /usr/local/bin/osrm-routed-$profile && killall osrm-routed-$profile
+	if [ $? -ne 0 ]; then return 1; fi
+	osmium fileinfo --no-progress -e $datadir/tmp-$profile/$f.pbf |grep Last| sed 's/.*: //' > /home/izsk/weby/epsilon.sk/routing/last-mod-$profile && rm $datadir/tmp-$profile/*pbf
+}
+
 upgrade_osrm() {
 	profile=$1;
-	f="bigslovakia"
-	if [ "$profile" = "test" ]; then 
-		f="bratislava";
-	fi
-	echo $profile $f
 	cd $osrmdir
 	out="$out,$profile profile $f:\t`date`"
 	mkdir -p $datadir/tmp-$profile;
-	if [ ! -r $datadir/tmp-$profile/$f.pbf ]; then
+	if [ ! -r "$datadir/tmp-$profile/$f.pbf" ]; then
 		cp $datadir/$f.pbf $datadir/tmp-$profile/
 	fi
-	osrm-extract -p oma-$profile.lua --small-component-size $small $datadir/tmp-$profile/$f.pbf && osrm-contract $datadir/tmp-$profile/$f.osrm && rm $datadir/$profile/* && mv $datadir/tmp-$profile/$f.osrm* $datadir/$profile/ && cp -f /usr/local/bin/osrm-routed /usr/local/bin/osrm-routed-$profile && killall osrm-routed-$profile
-	if [ $? -ne 0 ]; then exit; fi
-	stat -c %y $datadir/$profile/$f.osrm |sed 's/\..*//' > /home/izsk/weby/epsilon.sk/routing/last-mod-$profile
-    rm $datadir/tmp-$profile/*pbf
-	echo 'ok'
-	# copy do live server
-	scp $datadir/$profile/* 10.9.0.1:$datadir/tmp-$profile/
-	if [ $? -ne 0 ]; then exit; fi
-	scp /usr/local/bin/osrm-routed-$profile 10.9.0.1:
-	ssh 10.9.0.1 "rm $datadir/$profile/* && mv $datadir/tmp-$profile/* $datadir/$profile/ && cp -f ~/osrm-routed-$profile /usr/local/bin/ && killall osrm-routed-$profile";
-	oma f epsilon.sk/routing
+	osrm-extract -p oma-$profile.lua --small-component-size $small $datadir/tmp-$profile/$f.pbf && osrm-contract $datadir/tmp-$profile/$f.osrm && upgrade_local $profile #rm $datadir/$profile/* && mv $datadir/tmp-$profile/*.osrm* $datadir/$profile/ && cp -f /usr/local/bin/osrm-routed /usr/local/bin/osrm-routed-$profile && killall osrm-routed-$profile
+	if [ $? -ne 0 ]; then return 1; fi
+	#stat -c %y $datadir/$profile/$f.osrm |sed 's/\..*//' > /home/izsk/weby/epsilon.sk/routing/last-mod-$profile
+	#osmium fileinfo --no-progress -e $datadir/tmp-$f.pbf |grep Last| sed 's/.*: //' > /home/izsk/weby/epsilon.sk/routing/last-mod-$profile
+    #rm $datadir/tmp-$profile/*pbf
+	upgrade_remote $profile
 }
-
-SCRIPT=$(readlink -f "$0")
-# Absolute path this script is in, thus /home/user/bin
-SCRIPTPATH=$(dirname "$SCRIPT")
-cd $SCRIPTPATH
 
 cp *lua $osrmdir
 cp $osrmdir/osrm-backend/profiles/car.lua $osrmdir/oma-car.lua
-cp $osrmdir/oma-foot.lua $osrmdir/oma-test.lua
+#cp $osrmdir/oma-foot.lua $osrmdir/oma-test.lua
 
 crop_bigslovakia() {
 	bbox=` echo "select concat('', round(st_xmin(w)::numeric,3), ',', round(st_ymin(w)::numeric,3), ',', round(st_xmax(w)::numeric,3), ',', round(st_ymax(w)::numeric,3)) from (select st_collect(geometry(p)) as w from t_elevation) as t ;" | psql -t $dbname`
