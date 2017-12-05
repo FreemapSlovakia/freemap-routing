@@ -1,6 +1,6 @@
 #!/bin/sh
 cd /home/vseobecne/ine/osrmv5/
-version="5.13.0";
+version="5.14.1"
 rm v* master.zip
 rm -rf osrm-backend*
 if [ 1 -eq 1 ]; then
