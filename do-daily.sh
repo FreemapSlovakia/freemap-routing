@@ -9,6 +9,9 @@ out=" starting: `date`"
 
 update_planet > /dev/null
 crop_bigslovakia > /dev/null
+crop_slovakia > /dev/null
+cp -p $datadir/*slovakia*pbf /home/izsk/bigweby/epsilon/routing
+oma bigweby
 test_file > /dev/null
 cp $datadir/carslovakia.pbf $datadir/tmp-car/bigslovakia.pbf
 upgrade_osrm car > /dev/null

@@ -38,4 +38,12 @@ foreach($speed as $typ => $c) {
 ?>
 <li><a href="https://routing.epsilon.sk/debug.php?profil=ski&speed=speed&speeds=10,20&colors=blue,green,red&lat=48.94276&lon=19.59249">ski chopok</a></li>
 </ul>
+<h2>Download dát</h2><ul>
+<li><a href="/data/slovakia.pbf">slovakia.pbf</a> - cca 180mb</li>
+<li><a href="/data/bigslovakia.pbf">bigslovakia.pbf</a> - cca 380mb + bounding box</li>
+<li><a href="/data/carslovakia.pbf">carslovakia.pbf</a> - cca 610mb + 30km</li>
+</ul>
+
+
+
 </body></html>

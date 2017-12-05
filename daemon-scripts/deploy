@@ -6,3 +6,8 @@ update-rc.d osrm-daemon.sh defaults
 touch /var/log/osrm_daemon.log; chown michal /var/log/osrm_daemon.log
 echo "maybe implement confing of apache.conf into your apache.configuration"
 cp www/* /home/izsk/weby/epsilon.sk/routing/
+# for pbf files
+mkdir /home/izsk/bigweby/epsilon/routing
+cd /home/izsk/weby/epsilon.sk/routing/
+ln -s /home/izsk/bigweby/epsilon/routing data
+
