@@ -88,3 +88,11 @@ function WayHandlers.footclassmud(profile,way,result,data)
   end
 end
 
+function WayHandlers.classunsafe(profile,way,result,data)
+  if profile.unsafe_highway[data.highway] and profile.unsafe_highway[data.highway] < 0.7 then
+       result.forward_classes['unsafe'] = true; result.backward_classes['unsafe'] = true;
+  end
+  if profile.unsafe_highway[data.highway] then
+       result.forward_classes['medium'] = true; result.backward_classes['medium'] = true;
+  end
+end
