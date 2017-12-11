@@ -39,6 +39,9 @@ function setup()
 		Set {'night', 'stroller'},Set {'night','stroller','mud'},
 		Set {'stroller','mud'}
     },
+	relation_types = Sequence {
+      "route", "highway"
+    },
 
     unsafe_highway = Set { 'primary', 'primary_link', 'secondary', 'secondary_link', 'tertiary', 'tertiary_link', 'unclassified' },
     medium_highway = Set { 'residential', 'road', 'service' },
@@ -124,8 +127,8 @@ function setup()
       },
 
       amenity = {
-        parking         = walking_speed,
-        parking_entrance= walking_speed
+        --parking         = walking_speed,
+        --parking_entrance= walking_speed
       },
 
       man_made = {
@@ -211,7 +214,9 @@ function process_way(profile, way, result)
     public_transport = way:get_value_by_key('public_transport')
   }
   -- relation only ways
-  if route_ways[way:id()] then data.highway = route_ways[way:id()]; end
+  if route_ways[way:id()] then
+	data.highway = route_ways[way:id()];
+  end
   -- perform an quick initial check and abort if the way is
   -- obviously not routable. here we require at least one
   -- of the prefetched tags to be present, ie. the data table
