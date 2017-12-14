@@ -51,7 +51,9 @@ function WayHandlers.footrate(profile,way,result,data)
   if profile.unsafe_highway[data.highway] then
     result.forward_rate = result.forward_rate*0.3; result.backward_rate = result.backward_rate*0.3;
   end
-  if profile.medium_highway[data.highway] then
+  if profile.medium_highway[data.highway] and way:get_value_by_key("maxspeed") and tonumber(way:get_value_by_key("maxspeed")) <= 30 then
+    result.forward_rate = result.forward_rate*0.8; result.backward_rate = result.backward_rate*0.8;
+  elseif profile.medium_highway[data.highway] then
     result.forward_rate = result.forward_rate*0.6; result.backward_rate = result.backward_rate*0.6;
   end
   if foot_ways[way:id()] == "red" then
@@ -89,7 +91,7 @@ function WayHandlers.footclassmud(profile,way,result,data)
 end
 
 function WayHandlers.classunsafe(profile,way,result,data)
-  if profile.unsafe_highway[data.highway] and profile.unsafe_highway[data.highway] < 0.7 then
+  if profile.unsafe_highway[data.highway] and (profile.unsafe_highway[data.highway] == true or profile.unsafe_highway[data.highway] < 0.7) then
        result.forward_classes['unsafe'] = true; result.backward_classes['unsafe'] = true;
   end
   if profile.unsafe_highway[data.highway] then

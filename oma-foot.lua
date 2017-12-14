@@ -29,7 +29,7 @@ function setup()
     default_speed           = walking_speed,
     oneway_handling         = 'specific',     -- respect 'oneway:foot' but not 'oneway'
     classes = Sequence {
-        'night', 'stroller', 'mud'
+        'night', 'stroller', 'mud','unsafe','medium'
     },
 
     excludable = Sequence {
@@ -37,7 +37,7 @@ function setup()
         Set {'stroller'},
         Set {'mud'},
 		Set {'night', 'stroller'},Set {'night','stroller','mud'},
-		Set {'stroller','mud'}
+		Set {'stroller','mud'}, Set {'stroller','unsafe'}
     },
 	relation_types = Sequence {
       "route", "highway"
@@ -265,7 +265,8 @@ function process_way(profile, way, result)
     WayHandlers.footrate, 
     WayHandlers.footclassnight,
     WayHandlers.footclassstroller,
-    WayHandlers.footclassmud
+    WayHandlers.footclassmud,
+    WayHandlers.classunsafe
   }
 
   WayHandlers.run(profile,way,result,data,handlers)
