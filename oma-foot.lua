@@ -37,7 +37,7 @@ function setup()
         Set {'stroller'},
         Set {'mud'},
 		Set {'night', 'stroller'},Set {'night','stroller','mud'},
-		Set {'stroller','mud'}, Set {'stroller','unsafe'}
+		Set {'stroller','mud'}, Set {'stroller','unsafe'}, Set {'unsafe'}, Set {'unsafe','stroller'}
     },
 	relation_types = Sequence {
       "route", "highway"
