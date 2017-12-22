@@ -1,6 +1,18 @@
 --unsafe_highway = Set { 'primary', 'primary_link', 'secondary', 'secondary_link', 'tertiary', 'tertiary_link', 'unclassified' }
 --medium_highway = Set { 'residential', 'road', 'service' }
 
+function get_from_rel(relations, way, key, value, ret)
+        -- if any of way's relation have key=value, return tag ret; else return NULL
+        local rel_id_list = relations:get_relations(way)
+        for i, rel_id in ipairs(rel_id_list) do
+                local rel = relations:relation(rel_id);
+                local p = rel:get_value_by_key(key);
+                if value == '*' and p then return rel:get_value_by_key(ret); end
+                if p == value then return rel:get_value_by_key(ret); end
+        end
+        return nil;
+end
+
 
 -- handles name, including ref and pronunciation
 function WayHandlers.footnames(profile,way,result,data)
@@ -45,13 +57,15 @@ end
 function WayHandlers.footrate(profile,way,result,data)
   result.forward_rate = math.max(result.forward_speed, 0)*3.6;
   result.backward_rate = math.max(result.backward_speed, 0)*3.6;
+  local maxspeed=tonumber(way:get_value_by_key("maxspeed"));
+  if maxspeed == nil or maxspeed == "" then maxspeed=50; end
   if way:get_value_by_key("segregated") == "no" and way:get_value_by_key("bicycle") or highway=="cycleway" then
     result.forward_rate = result.forward_rate*0.5; result.backward_rate = result.backward_rate*0.5;
   end
   if profile.unsafe_highway[data.highway] then
     result.forward_rate = result.forward_rate*0.3; result.backward_rate = result.backward_rate*0.3;
   end
-  if profile.medium_highway[data.highway] and way:get_value_by_key("maxspeed") and tonumber(way:get_value_by_key("maxspeed")) <= 30 then
+  if profile.medium_highway[data.highway] and maxspeed and maxspeed ~= "" and tonumber(maxspeed) <= 30 then
     result.forward_rate = result.forward_rate*0.8; result.backward_rate = result.backward_rate*0.8;
   elseif profile.medium_highway[data.highway] then
     result.forward_rate = result.forward_rate*0.6; result.backward_rate = result.backward_rate*0.6;
