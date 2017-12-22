@@ -8,6 +8,7 @@ $speed['test'] = array('speeds' => array(3,7), 'colors' => array('blue','green',
 $speed['ski'] = array('speeds' => array(10,20), 'colors' => array('blue','green','red') );
 $speed['nordic'] = array('speeds' => array(4,6), 'colors' => array('blue','green','red') );
 $speed['train'] = array('speeds' => array(25,50), 'colors' => array('red','blue', 'green') );
+$speed['bus'] = array('speeds' => array(25,50), 'colors' => array('red','blue', 'green') );
 
 
 //rate
@@ -26,5 +27,5 @@ $names['car'] = 'auto';
 $names['ski'] = 'zjazdové lyžovanie, vleky, lanovky a zjazdovky, pokrytie celého sveta';
 $names['nordic'] = "bežkovanie, pokrytie celého sveta";
 $names['train'] = "vlaky, električky a šaliny";
-
+$names['bus'] = "autobusy a trolejbusy";
 ?>

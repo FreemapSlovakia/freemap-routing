@@ -14,6 +14,7 @@ cp -p $datadir/*slovakia*pbf /home/izsk/bigweby/epsilon/routing
 test_file > /dev/null
 cp $datadir/carslovakia.pbf $datadir/tmp-car/bigslovakia.pbf
 upgrade_osrm car > /dev/null
+upgrade_osrm bus > /dev/null
 
 if [ -r $datadir/tmp-ski/bigslovakia.pbf ]; then rm $datadir/tmp-ski/bigslovakia.pbf; fi
 out="$out,get pistes: `date`"

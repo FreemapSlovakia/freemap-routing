@@ -6,4 +6,5 @@ while :; do osrm-routed-car -p 5003 /home/ssd/osrm/car/bigslovakia.osrm > /dev/n
 while :; do osrm-routed-ski -p 5004 /home/ssd/osrm/ski/bigslovakia.osrm > /dev/null ; done  &
 while :; do osrm-routed-train -p 5005 /home/ssd/osrm/train/bigslovakia.osrm > /dev/null ; done  &
 while :; do osrm-routed-nordic -p 5006 /home/ssd/osrm/nordic/bigslovakia.osrm > /dev/null ; done  &
+while :; do osrm-routed-bus -p 5007 /home/ssd/osrm/bus/bigslovakia.osrm > /dev/null ; done  &
 
