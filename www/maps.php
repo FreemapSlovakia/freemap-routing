@@ -19,7 +19,7 @@ $rate['foot'] = array('speeds' => array(1,10), 'colors' => array('blue','green',
 // exclude
 $classes['car'] = array('motorway','toll');
 // $classes['bike'] = array('night','mud','major'); - not implemented yet
-$classes['foot'] = array('stroller','mud','night');
+$classes['foot'] = array('stroller','mud','night','unsafe');
 
 $names['foot'] = 'peší pohyb, turistika v prírode aj v meste';
 $names['bicycle'] = 'mestský alebo trekking bicykel';
