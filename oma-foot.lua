@@ -35,12 +35,12 @@ function setup()
     excludable = Sequence {
         Set {'night'},
         Set {'stroller'},
-        Set {'mud'},
+        Set {'mud'}, Set {'unsafe'}, 
 		Set {'night', 'stroller'},Set {'night','stroller','mud'},
-		Set {'stroller','mud'}, Set {'stroller','unsafe'}, Set {'unsafe'}, Set {'unsafe','stroller'}
+		Set {'stroller','mud'}, Set {'stroller','unsafe'}, -- max 8
     },
 	relation_types = Sequence {
-      "route", "highway"
+      "route", "highway", "multipolygon"
     },
 
     unsafe_highway = Set { 'primary', 'primary_link', 'secondary', 'secondary_link', 'tertiary', 'tertiary_link', 'unclassified' },
@@ -229,7 +229,7 @@ function process_way(profile, way, result)
     -- set the default mode for this profile. if can be changed later
     -- in case it turns we're e.g. on a ferry
     WayHandlers.default_mode,
-
+    WayHandlers.platform,
     -- check various tags that could indicate that the way is not
     -- routable. this includes things like status=impassable,
     -- toll=yes and oneway=reversible
@@ -266,7 +266,7 @@ function process_way(profile, way, result)
     WayHandlers.footclassnight,
     WayHandlers.footclassstroller,
     WayHandlers.footclassmud,
-    WayHandlers.classunsafe
+    WayHandlers.classunsafe2
   }
 
   WayHandlers.run(profile,way,result,data,handlers)

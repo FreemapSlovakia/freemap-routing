@@ -112,3 +112,14 @@ function WayHandlers.classunsafe(profile,way,result,data)
        result.forward_classes['medium'] = true; result.backward_classes['medium'] = true;
   end
 end
+function WayHandlers.classunsafe2(profile,way,result,data)
+  if profile.unsafe_highway[data.highway] then
+       result.forward_classes['unsafe'] = true; result.backward_classes['unsafe'] = true;
+  end
+end
+function WayHandlers.platform(profile,way,result,data)
+  if data.public_transport and data.public_transport == 'platform' then
+       result.forward_speed=profile.default_speed; result.backward_speed=profile.default_speed;
+  end
+end
+
