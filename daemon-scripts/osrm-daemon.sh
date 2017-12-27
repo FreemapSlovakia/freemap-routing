@@ -51,7 +51,7 @@ case "$1" in
   reload)
 	kill `ps ax |grep osrm-routed| grep -v grep | sed 's/? .*//'`
 	;;
-  retart)
+  restart)
     stop
     start
     ;;
