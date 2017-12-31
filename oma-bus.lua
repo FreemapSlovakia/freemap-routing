@@ -21,6 +21,12 @@ function setup()
     }, 
     default_mode = mode.driving,
     default_speed = 30,
+    oneway_handling = true,
+    restrictions = Sequence {
+      'motorcar',
+      'motor_vehicle',
+      'vehicle'
+    },
     classes = Sequence {
         'tram', 'train'
     },
@@ -46,8 +52,8 @@ function process_way(profile, way, result, relations)
 	handlers = Sequence {
 		WayHandlers.default_mode,
 		WayHandlers.names,
-		WayHandlers.oneway,
 		WayHandlers.bus,
+		WayHandlers.oneway,
 --		WayHandlers.maxspeed,
 	}
 	WayHandlers.run(profile, way, result, data, handlers, relations)
