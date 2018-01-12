@@ -36,5 +36,6 @@ foreach($rate as $typ => $c) {
 ?>
 <li>speed: rýchlosť v km/h, na základe ktorej sa vypočítava čas dojazdu</li>
 <li>rate: "rýchlosť" zhruba v m/s, na základe ktorej sa vyhľadáva trasa (napr. na rušnej ceste je pre peších rate iná ako speed)</li>
+<li><a href="bikesharing.php">bikesharing</a></li>
 </ul>
 </body></html>
