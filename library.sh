@@ -99,3 +99,14 @@ postgis_import() {
 	echo "delete from ${prefix}_polygon where osm_id not in (select osm_id from ${prefix}_polygon where landuse in ('industrial', 'garages', 'construction','brownfield','landfill', 'quary',  'village_green','grass','meadow', 'forest', 'vineyard', 'orchard') or \"natural\" in ('wood') or leisure in ('park') )" |psql $dbname
 	vacuumdb --full -t ${prefix}_line -t ${prefix}_polygon $dbname
 }
+
+no_srtm_data() {
+	# lon je x
+	from="from (select geometry(st_buffer(geography(box2d(st_collect(geometry(p)))), 1000)) as w from t_elevation) as t"
+	func1=`echo "select concat('if segment.source.lon < ', round(st_xmin(w)::numeric,3), ' or segment.target.lon < ', round(st_xmin(w)::numeric,3), ' then return true; end;' ) $from;" | psql -At $dbname`
+	func2=`echo "select concat('if segment.source.lon > ', round(st_xmax(w)::numeric,3), ' or segment.target.lon > ', round(st_xmax(w)::numeric,3), ' then return true; end;' ) $from;" | psql -At $dbname`
+	func3=`echo "select concat('if segment.source.lat < ', round(st_ymin(w)::numeric,3), ' or segment.target.lat < ', round(st_ymin(w)::numeric,3), ' then return true; end;' ) $from;" | psql -At $dbname`
+    func4=`echo "select concat('if segment.source.lat > ', round(st_ymax(w)::numeric,3), ' or segment.target.lat > ', round(st_ymax(w)::numeric,3), ' then return true; end;' ) $from;" | psql -At $dbname`
+
+	echo "$func1  $func2  $func3  $func4  return false; ";
+}

@@ -4,7 +4,16 @@ sql_env = assert( lua_sql.postgres() )
 sql_con = assert( sql_env:connect("mapnik") ) -- you can add db user/password here if needed
 print("PostGIS connection opened")
 
+function out_of_data(segment)
+if segment.source.lon < 16.698 or segment.target.lon < 16.698 then return true; end;  
+if segment.source.lon > 22.704 or segment.target.lon > 22.704 then return true; end;  
+if segment.source.lat < 47.641 or segment.target.lat < 47.641 then return true; end;  
+if segment.source.lat > 49.702 or segment.target.lat > 49.702 then return true; end;  
+return false;
+end
+
 function segment_function (profile, segment)
+    if out_of_data(segment) then return; end
 	local line = "st_makeline(ST_SetSRID(st_makepoint(" .. segment.source.lon .. "," .. segment.source.lat .. "), 4326), ST_SetSRID(st_makepoint(" .. segment.target.lon .. "," .. segment.target.lat .. "), 4326))";
 	local sql_query = "select getz(ST_SetSRID(st_makepoint(" .. segment.source.lon .. "," .. segment.source.lat .. "), 4326)::geography) as ele_first" 
 		.. ", getz(ST_SetSRID(st_makepoint(" .. segment.target.lon .. "," .. segment.target.lat .. "), 4326)::geography) as ele_last" 
