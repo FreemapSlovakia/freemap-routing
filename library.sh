@@ -78,6 +78,13 @@ crop_slovakia() {
 	osmium extract -p slovakia.poly bigslovakia.pbf -o slovakia.pbf
 }
 
+crop_bikesharing() {
+	cd $datadir
+	echo '{"type": "Feature","properties": {"name":"world bikesharing"}, "geometry": ' > bikesharing.json
+	echo "select st_asgeojson(st_union(w)) from (select geometry(st_buffer(geography(box2d(st_collect(geometry(p)))), 4000)) as w from t_elevation union select st_union(geometry(st_buffer(way, 1000))) from bikesharing_stations) as a" | psql -tA $dbname >> bikesharing.json
+	echo "}" >> bikesharing.json
+}
+
 test_file() {
 	rm $datadir/bratislava.pbf
 	osmium extract -b 16.9,47.96,17.33,48.3 $datadir/bigslovakia.pbf -o $datadir/bratislava.pbf
