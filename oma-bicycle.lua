@@ -51,7 +51,8 @@ local profile = {
     'sally_port',
     'gate',
     'no',
-    'block','kerb'
+    'block','kerb',
+    'swing gate'
   },
 
   access_tag_whitelist = Set {
