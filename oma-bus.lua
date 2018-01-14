@@ -1,14 +1,14 @@
 -- OSRM tran and tram profile
 
-api_version = 3
+api_version = 4
 Set = require('lib/set')
 Sequence = require('lib/sequence')
 Handlers = require("lib/way_handlers")
 --Relations = require("lib/relations")
 require("handlers");
 
-function WayHandlers.bus(profile,way,result,data)
-        result.forward_speed=profile.default_speed; result.forward_rate=profile.default_speed;
+function WayHandlers.bus(profile,way,result,data, relations)
+    result.forward_speed=profile.default_speed; result.forward_rate=profile.default_speed;
     result.backward_speed=profile.default_speed; result.backward_rate=profile.default_speed;
 end
 
