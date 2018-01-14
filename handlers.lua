@@ -13,9 +13,10 @@ function get_from_rel(relations, way, key, value, ret)
         return nil;
 end
 
+MyHandlers = {}
 
 -- handles name, including ref and pronunciation
-function WayHandlers.footnames(profile,way,result,data)
+function MyHandlers.footnames(profile,way,result,data)
   -- parse the remaining tags
   local name = way:get_value_by_key("name")
   local pronunciation = way:get_value_by_key("name:pronunciation")
@@ -54,7 +55,7 @@ function WayHandlers.footnames(profile,way,result,data)
   end
 end
 
-function WayHandlers.footrate(profile,way,result,data)
+function MyHandlers.footrate(profile,way,result,data)
   result.forward_rate = math.max(result.forward_speed, 0)*3.6;
   result.backward_rate = math.max(result.backward_speed, 0)*3.6;
   local maxspeed=tonumber(way:get_value_by_key("maxspeed"));
@@ -79,14 +80,14 @@ function WayHandlers.footrate(profile,way,result,data)
   end
 end
 
-function WayHandlers.footclassnight(profile,way,result,data)
+function MyHandlers.footclassnight(profile,way,result,data)
   -- test: pouzitie parametra "exclude=night" v url, vyhodi cesty co nie su osvetlene a pod.
   if way:get_value_by_key("lit") == "no" or way:get_value_by_key("lit") == "disused" then
         result.forward_classes['night'] = true; result.backward_classes['night'] = true;
   end
 end
 
-function WayHandlers.footclassstroller(profile,way,result,data)
+function MyHandlers.footclassstroller(profile,way,result,data)
   -- stroller: vyhodi uzke cesty, schody, ...
   local width = tonumber(way:get_value_by_key("width"))
   if width and width ~= "" and tonumber(width) < 1 or way:get_value_by_key("highway") == 'steps' then
@@ -94,7 +95,7 @@ function WayHandlers.footclassstroller(profile,way,result,data)
   end
 end
 
-function WayHandlers.footclassmud(profile,way,result,data)
+function MyHandlers.footclassmud(profile,way,result,data)
   muddy = Set { 'ground','dirt','earth','mud' }
   local surface = way:get_value_by_key("surface")
   if surface == nil and way:get_value_by_key("highway") == 'path' then surface='dirt'; end
@@ -112,12 +113,13 @@ function WayHandlers.classunsafe(profile,way,result,data)
        result.forward_classes['medium'] = true; result.backward_classes['medium'] = true;
   end
 end
-function WayHandlers.classunsafe2(profile,way,result,data)
+function MyHandlers.classunsafe2(profile,way,result,data)
   if profile.unsafe_highway[data.highway] then
        result.forward_classes['unsafe'] = true; result.backward_classes['unsafe'] = true;
   end
 end
-function WayHandlers.platform(profile,way,result,data)
+
+function MyHandlers.platform(profile,way,result,data)
   if data.public_transport and data.public_transport == 'platform' then
        result.forward_speed=profile.default_speed; result.backward_speed=profile.default_speed;
   end

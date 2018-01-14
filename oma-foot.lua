@@ -1,6 +1,6 @@
 -- Foot profile
 
-api_version = 2
+api_version = 4
 
 Set = require('lib/set')
 Sequence = require('lib/sequence')
@@ -188,7 +188,7 @@ function process_node(profile, node, result)
 end
 
 -- main entry point for processsing a way
-function process_way(profile, way, result)
+function process_way(profile, way, result, relations)
   -- the intial filtering of ways based on presence of tags
   -- affects processing times significantly, because all ways
   -- have to be checked.
@@ -229,7 +229,7 @@ function process_way(profile, way, result)
     -- set the default mode for this profile. if can be changed later
     -- in case it turns we're e.g. on a ferry
     WayHandlers.default_mode,
-    WayHandlers.platform,
+    MyHandlers.platform,
     -- check various tags that could indicate that the way is not
     -- routable. this includes things like status=impassable,
     -- toll=yes and oneway=reversible
@@ -261,12 +261,12 @@ function process_way(profile, way, result)
     WayHandlers.startpoint,
 
     -- set name, ref and pronunciation
-    WayHandlers.footnames,
-    WayHandlers.footrate, 
-    WayHandlers.footclassnight,
-    WayHandlers.footclassstroller,
-    WayHandlers.footclassmud,
-    WayHandlers.classunsafe2
+    MyHandlers.footnames,
+    MyHandlers.footrate,
+    MyHandlers.footclassnight,
+    MyHandlers.footclassstroller,
+    MyHandlers.footclassmud,
+    MyHandlers.classunsafe2
   }
 
   WayHandlers.run(profile,way,result,data,handlers)
@@ -275,7 +275,7 @@ end
 function process_turn (profile, turn)
   turn.duration = 0.
 
-  if turn.direction_modifier == direction_modifier.u_turn then
+  if turn.is_u_turn then
      turn.duration = turn.duration + profile.properties.u_turn_penalty
   end
 
