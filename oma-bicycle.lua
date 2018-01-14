@@ -3,12 +3,14 @@ api_version = 1
 -- Bicycle profile
 local find_access_tag = require("lib/access").find_access_tag
 local Set = require('lib/set')
-local Sequence = require('lib/sequence')
-local Handlers = require("lib/handlers")
+Sequence = require('lib/sequence')
+Handlers = require("lib/handlers")
+
 local next = next       -- bind to local for speed
 local limit = require("lib/maxspeed").limit
 require("segments-bicycle");
-require("route_rels")
+require("route_rels");
+--require("handlers");
 
 -- these need to be global because they are accesed externaly
 properties.max_speed_for_map_matching    = 110/3.6 -- kmph -> m/s
@@ -99,6 +101,17 @@ local profile = {
 	tertiary = 0.7, tertiary_link = 0.7, 
 	unclassified = 0.7 
   },
+  classes = Sequence {
+        'unsafe', 'medium', 'mud'
+    },
+
+    excludable = Sequence {
+        Set {'unsafe'},
+        Set {'medium'},
+        Set {'unsafe', 'medium'},
+        Set {'mud'}
+    },
+
 
   bicycle_speeds = {
     cycleway = default_speed,
@@ -476,7 +489,7 @@ function way_function (way, result)
   if result.forward_speed > 0 then
     -- convert from km/h to m/s
     result.forward_rate = result.forward_speed / 3.6;
-	if tonumber(maxspeed) >= 60 or lanes and tonumber(lanes) >= 2 or public_transport_ways[way:id()] then
+	if tonumber(maxspeed) >= 60 or tonumber(lanes) and tonumber(lanes) >= 2 or public_transport_ways[way:id()] then
 	  result.forward_rate = result.forward_rate * 0.5 end
     if profile.unsafe_highway[data.highway] then
       result.forward_rate = result.forward_rate * profile.unsafe_highway[data.highway]
@@ -485,7 +498,7 @@ function way_function (way, result)
   if result.backward_speed > 0 then
     -- convert from km/h to m/s
     result.backward_rate = result.backward_speed / 3.6;
-	if tonumber(maxspeed) >= 60 or lanes and tonumber(lanes) >= 2 or public_transport_ways[way:id()] then
+	if tonumber(maxspeed) >= 60 or tonumber(lanes) and tonumber(lanes) >= 2 or public_transport_ways[way:id()] then
 	  result.backward_rate = result.backward_rate * 0.5; end
     if profile.unsafe_highway[data.highway] then
       result.backward_rate = result.backward_rate * profile.unsafe_highway[data.highway]
@@ -535,7 +548,8 @@ function way_function (way, result)
     --'handle_startpoint',
 
     -- set name, ref and pronunciation
-    'handle_names'
+    'handle_names',
+--    'classunsafe', 'footclassmud'
   }
 
   Handlers.run(handlers,way,result,data,profile)
