@@ -9,12 +9,13 @@ out=" starting: `date`"
 
 update_planet > /dev/null
 
-rm $datadir/bikesharing.pbf
-osmium extract -p $datadir/bikesharing.json $datadir/planet-latest.osm.pbf -o $datadir/bikesharing.pbf
-
 crop_bigslovakia > /dev/null
 crop_slovakia > /dev/null
 cp -p $datadir/*slovakia*pbf /home/izsk/bigweby/epsilon/routing
+
+rm $datadir/bikesharing.pbf
+osmium extract -p $datadir/bikesharing.json $datadir/planet-latest.osm.pbf -o $datadir/bikesharing.pbf
+
 test_file > /dev/null
 cp $datadir/carslovakia.pbf $datadir/tmp-car/bigslovakia.pbf
 upgrade_osrm car > /dev/null
