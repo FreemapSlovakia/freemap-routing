@@ -20,7 +20,7 @@ small=1000
 
 update_planet() {
 	cd $planetdir
-	/usr/bin/pyosmium-up-to-date -v --server https://planet.osm.org/replication/day/ planet-latest.osm.pbf
+	/usr/bin/pyosmium-up-to-date -v --server https://planet.openstreetmap.org/replication/day/ planet-latest.osm.pbf
 }
 
 upgrade_remote() {
