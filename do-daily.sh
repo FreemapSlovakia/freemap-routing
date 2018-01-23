@@ -8,6 +8,8 @@ date
 out=" starting: `date`"
 
 update_planet > /dev/null
+update_planet > /dev/null # just in case, the first one fails
+
 
 crop_bigslovakia > /dev/null
 crop_slovakia > /dev/null
