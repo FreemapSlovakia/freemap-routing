@@ -74,6 +74,7 @@ function setup()
       'forestry',
       'private',
       'delivery',
+      'use_sidepath',
     },
 
     restricted_access_tag_list = Set { },
