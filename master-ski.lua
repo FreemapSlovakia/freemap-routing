@@ -51,7 +51,7 @@ function WayHandlers.skipiste(profile,way,result,data)
 	if way:get_value_by_key('area') == 'yes' or  way:get_value_by_key('leisure') == 'sports_centre' then
 		return false;
 	end
-	if data.piste == 'foot' then
+	if data.piste == 'foot' or data.piste=='connection' then
                 result.forward_speed=3; result.forward_rate=3;
                 result.backward_speed=3; result.backward_rate=3;
                 result.backward_mode = mode.walking; result.forward_mode = mode.walking;
