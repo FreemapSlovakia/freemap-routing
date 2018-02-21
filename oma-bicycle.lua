@@ -70,7 +70,9 @@ local profile = {
    	'forestry',
    	'delivery'
   },
-
+  service_access_tag_blacklist = Set {
+    'private'
+  },
   restricted_access_tag_list = Set { },
 
   restricted_highway_whitelist = Set { },
