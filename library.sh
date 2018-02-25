@@ -62,12 +62,8 @@ cp $osrmdir/osrm-backend/profiles/car.lua $osrmdir/oma-car.lua
 #cp $osrmdir/oma-foot.lua $osrmdir/oma-test.lua
 
 crop_bigslovakia() {
-	bbox=` echo "select concat('', round(st_xmin(w)::numeric,3), ',', round(st_ymin(w)::numeric,3), ',', round(st_xmax(w)::numeric,3), ',', round(st_ymax(w)::numeric,3)) from (select geometry(st_buffer(geography(box2d(st_collect(geometry(p)))), 35000)) as w from t_elevation) as t;" | psql -t $dbname`
-	rm $datadir/carslovakia.pbf
-	osmium extract -b $bbox $planetdir/planet-latest.osm.pbf -o $datadir/carslovakia.pbf
-	bbox=` echo "select concat('', round(st_xmin(w)::numeric,3), ',', round(st_ymin(w)::numeric,3), ',', round(st_xmax(w)::numeric,3), ',', round(st_ymax(w)::numeric,3)) from (select geometry(st_buffer(geography(box2d(st_collect(geometry(p)))), 1000)) as w from t_elevation) as t;" | psql -t $dbname`
-	rm $datadir/bigslovakia.pbf
-	osmium extract -b $bbox $planetdir/carslovakia.pbf -o $datadir/bigslovakia.pbf
+	bbox=` echo "select concat('', round(st_xmin(w)::numeric,3), ',', round(st_ymin(w)::numeric,3), ',', round(st_xmax(w)::numeric,3), ',', round(st_ymax(w)::numeric,3)) from (select geometry(st_buffer(geography(box2d(st_collect(geometry(p)))), 35000)) as w from t_elevation) as t;" | psql -t $dbname` && rm $datadir/carslovakia.pbf &&	osmium extract -b $bbox $planetdir/planet-latest.osm.pbf -o $datadir/carslovakia.pbf
+	bbox=` echo "select concat('', round(st_xmin(w)::numeric,3), ',', round(st_ymin(w)::numeric,3), ',', round(st_xmax(w)::numeric,3), ',', round(st_ymax(w)::numeric,3)) from (select geometry(st_buffer(geography(box2d(st_collect(geometry(p)))), 1000)) as w from t_elevation) as t;" | psql -t $dbname` && rm $datadir/bigslovakia.pbf &&	osmium extract -b $bbox $planetdir/carslovakia.pbf -o $datadir/bigslovakia.pbf
 	osmium fileinfo --no-progress -e $datadir/bigslovakia.pbf |grep Last| sed 's/.*: //' > /home/izsk/weby/epsilon.sk/routing/last-mod-data
 }
 crop_slovakia() {
