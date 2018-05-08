@@ -26,10 +26,10 @@ update_planet() {
 upgrade_remote() {
 	profile=$1;
 	# copy do live server
-    scp $datadir/$profile/* 10.9.0.1:$datadir/tmp-$profile/
+    scp $datadir/$profile/* routing.epsilon.sk:$datadir/tmp-$profile/
     if [ $? -ne 0 ]; then return 1; fi
-    scp /usr/local/bin/osrm-routed-$profile 10.9.0.1:
-    ssh 10.9.0.1 "rm $datadir/$profile/* && mv $datadir/tmp-$profile/* $datadir/$profile/ && cp -f ~/osrm-routed-$profile /usr/local/bin/ && killall osrm-routed-$profile";
+    scp /usr/local/bin/osrm-routed-$profile routing.epsilon.sk:
+    ssh routing.epsilon.sk "rm $datadir/$profile/* && mv $datadir/tmp-$profile/* $datadir/$profile/ && cp -f ~/osrm-routed-$profile /usr/local/bin/ && killall osrm-routed-$profile";
     oma f epsilon.sk/routing
 }
 
