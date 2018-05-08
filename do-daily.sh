@@ -13,7 +13,9 @@ update_planet > /dev/null # just in case, the first one fails
 
 crop_bigslovakia > /dev/null
 crop_slovakia > /dev/null
-cp -p $datadir/*slovakia*pbf /home/izsk/bigweby/epsilon/routing
+cp -p $datadir/slovakia.pbf /home/izsk/bigweby/epsilon/routing
+cp -p $datadir/bigslovakia.pbf /home/izsk/bigweby/epsilon/routing
+
 
 rm $datadir/bikesharing.pbf
 osmium extract -p $datadir/bikesharing.json $datadir/planet-latest.osm.pbf -o $datadir/bikesharing.pbf
