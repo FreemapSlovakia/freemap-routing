@@ -46,19 +46,6 @@ function setup()
     unsafe_highway = Set { 'primary', 'primary_link', 'secondary', 'secondary_link', 'tertiary', 'tertiary_link', 'unclassified' },
     medium_highway = Set { 'residential', 'road', 'service' },
 
-    barrier_whitelist = Set {
-      'cycle_barrier',
-      'bollard',
-      'entrance',
-      'cattle_grid',
-      'border_control',
-      'toll_booth',
-      'sally_port',
-      'gate',
-      'no',
-      'kerb',
-      'block'
-    },
     barrier_blacklist = Set { 'yes', 'wall','fence'},
 
     access_tag_whitelist = Set {
@@ -175,7 +162,7 @@ function process_node(profile, node, result)
     end
   else
     local barrier = node:get_value_by_key("barrier")
-    if profile.barrier_blacklist[barrier] then
+    if barrier and profile.barrier_blacklist[barrier] then
         result.barrier = true
     end
   end
