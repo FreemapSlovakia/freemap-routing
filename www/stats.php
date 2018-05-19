@@ -12,7 +12,7 @@
 <p><a href='/'>spať</a>, použite na <a href='https://www.freemap.sk/'>www.freemap.sk</a>, (prípadne na <a href='https://freemap.epsilon.sk/#page=navigacia&amp;map=T/11/48.12187/17.20734'>demo</a>), je založené na OSRM a <a href="https://github.com/FreemapSlovakia/freemap-routing">tu sú zdrojové kódy</a></p>
 <p>Mapy ukazujú, kde ľudia najviac vyhľadávajú trasy.</p>
 <?php
-foreach(array('foot','bike','car') as $foot) { echo "<h2>$foot</h2><img src='https://routing.epsilon.sk/nosync/$foot.png' alt='stats for $foot' /> "; }
+foreach(array('foot','bike','car') as $foot) { echo "<h2>$foot</h2><img src='https://routing.epsilon.sk/nosync/$foot.png' alt='stats for $foot' style='max-width: 90%;'/> "; }
 
 ?>
 
