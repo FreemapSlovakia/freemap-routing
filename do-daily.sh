@@ -22,7 +22,7 @@ osmium extract -p $datadir/bikesharing.json $datadir/planet-latest.osm.pbf -o $d
 
 test_file > /dev/null
 cp $datadir/carslovakia.pbf $datadir/tmp-car/bigslovakia.pbf
-rm $datadir/tmp-bus/*; rm $datadir/tmp-train/*
+rm $datadir/tmp-bus/* $datadir/tmp-train/*
 cat $osrmdir/osrm-backend/profiles/car.lua |grep -v area > $osrmdir/oma-car.lua
 upgrade_osrm car > /dev/null
 upgrade_osrm bus > /dev/null
