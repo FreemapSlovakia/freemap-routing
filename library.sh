@@ -21,6 +21,7 @@ small=1000
 update_planet() {
 	cd $planetdir
 	/usr/bin/pyosmium-up-to-date -v --server https://planet.openstreetmap.org/replication/day/ planet-latest.osm.pbf
+	rm tmp*lastest*pbf
 }
 
 upgrade_remote() {
