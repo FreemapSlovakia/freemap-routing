@@ -9,9 +9,9 @@ fi
 
 dbname='mapnik';
 prefix='osrm_osm';
-datadir='/home/ssd/osrm'
+datadir='/home/izsk/bigweby/epsilon/routing'
 osrmdir='/home/vseobecne/ine/osrmv5'
-planetdir=$datadir
+planetdir='/home/ssd/osrm'
 f='bigslovakia'
 
 export osrmdir;
@@ -27,30 +27,30 @@ update_planet() {
 upgrade_remote() {
 	profile=$1;
 	# copy do live server
-    scp $datadir/$profile/* routing.epsilon.sk:$datadir/tmp-$profile/
+    scp $planetdir/$profile/* routing.epsilon.sk:$planetdir/tmp-$profile/
     if [ $? -ne 0 ]; then return 1; fi
     scp /usr/local/bin/osrm-routed-$profile routing.epsilon.sk:
-    ssh routing.epsilon.sk "rm $datadir/$profile/* && mv $datadir/tmp-$profile/* $datadir/$profile/ && cp -f ~/osrm-routed-$profile /usr/local/bin/ && killall osrm-routed-$profile";
+    ssh routing.epsilon.sk "rm $planetdir/$profile/* && mv $planetdir/tmp-$profile/* $planetdir/$profile/ && cp -f ~/osrm-routed-$profile /usr/local/bin/ && killall osrm-routed-$profile";
     oma f epsilon.sk/routing
 }
 
 upgrade_local() {
 	profile=$1;
 	#f='bigslovakia';
-	rm $datadir/$profile/* && mv $datadir/tmp-$profile/*.osrm* $datadir/$profile/ && cp -f /usr/local/bin/osrm-routed /usr/local/bin/osrm-routed-$profile && killall osrm-routed-$profile
+	rm $planetdir/$profile/* && mv $planetdir/tmp-$profile/*.osrm* $planetdir/$profile/ && cp -f /usr/local/bin/osrm-routed /usr/local/bin/osrm-routed-$profile && killall osrm-routed-$profile
 	if [ $? -ne 0 ]; then return 1; fi
-	osmium fileinfo --no-progress -e $datadir/tmp-$profile/$f.pbf |grep Last| sed 's/.*: //' > /home/izsk/weby/epsilon.sk/routing/last-mod-$profile && rm $datadir/tmp-$profile/*pbf
+	osmium fileinfo --no-progress -e $planetdir/tmp-$profile/$f.pbf |grep Last| sed 's/.*: //' > /home/izsk/weby/epsilon.sk/routing/last-mod-$profile && rm $planetdir/tmp-$profile/*pbf
 }
 
 upgrade_osrm() {
 	profile=$1;
 	cd $osrmdir
 	out="$out,$profile profile $f:\t`date`"
-	mkdir -p $datadir/tmp-$profile;
-	if [ ! -r "$datadir/tmp-$profile/$f.pbf" ]; then
-		cp $datadir/$f.pbf $datadir/tmp-$profile/
+	mkdir -p $planetdir/tmp-$profile;
+	if [ ! -r "$planetdir/tmp-$profile/$f.pbf" ]; then
+		cp $datadir/$f.pbf $planetdir/tmp-$profile/
 	fi
-	osrm-extract -p oma-$profile.lua --small-component-size $small $datadir/tmp-$profile/$f.pbf && osrm-contract $datadir/tmp-$profile/$f.osrm && upgrade_local $profile #rm $datadir/$profile/* && mv $datadir/tmp-$profile/*.osrm* $datadir/$profile/ && cp -f /usr/local/bin/osrm-routed /usr/local/bin/osrm-routed-$profile && killall osrm-routed-$profile
+	osrm-extract -p oma-$profile.lua --small-component-size $small $planetdir/tmp-$profile/$f.pbf && osrm-contract $planetdir/tmp-$profile/$f.osrm && upgrade_local $profile #rm $datadir/$profile/* && mv $datadir/tmp-$profile/*.osrm* $datadir/$profile/ && cp -f /usr/local/bin/osrm-routed /usr/local/bin/osrm-routed-$profile && killall osrm-routed-$profile
 	if [ $? -ne 0 ]; then return 1; fi
 	#stat -c %y $datadir/$profile/$f.osrm |sed 's/\..*//' > /home/izsk/weby/epsilon.sk/routing/last-mod-$profile
 	#osmium fileinfo --no-progress -e $datadir/tmp-$f.pbf |grep Last| sed 's/.*: //' > /home/izsk/weby/epsilon.sk/routing/last-mod-$profile
@@ -61,9 +61,13 @@ upgrade_osrm() {
 cp *lua $osrmdir
 
 crop_bigslovakia() {
-	bbox=` echo "select concat('', round(st_xmin(w)::numeric,3), ',', round(st_ymin(w)::numeric,3), ',', round(st_xmax(w)::numeric,3), ',', round(st_ymax(w)::numeric,3)) from (select geometry(st_buffer(geography(box2d(st_collect(geometry(p)))), 35000)) as w from t_elevation) as t;" | psql -t $dbname` && rm $datadir/carslovakia.pbf &&	osmium extract -b $bbox $planetdir/planet-latest.osm.pbf -o $datadir/carslovakia.pbf
-	bbox=` echo "select concat('', round(st_xmin(w)::numeric,3), ',', round(st_ymin(w)::numeric,3), ',', round(st_xmax(w)::numeric,3), ',', round(st_ymax(w)::numeric,3)) from (select geometry(st_buffer(geography(box2d(st_collect(geometry(p)))), 1000)) as w from t_elevation) as t;" | psql -t $dbname` && rm $datadir/bigslovakia.pbf &&	osmium extract -b $bbox $planetdir/carslovakia.pbf -o $datadir/bigslovakia.pbf
+	bbox=` echo "select concat('', round(st_xmin(w)::numeric,3), ',', round(st_ymin(w)::numeric,3), ',', round(st_xmax(w)::numeric,3), ',', round(st_ymax(w)::numeric,3)) from (select geometry(st_buffer(geography(box2d(st_collect(geometry(p)))), 255000)) as w from t_elevation) as t;" | psql -t $dbname` && rm $datadir/carslovakia.pbf && osmium extract -b $bbox $planetdir/planet-latest.osm.pbf -o $datadir/carslovakia.pbf
+	bbox=` echo "select concat('', round(st_xmin(w)::numeric,3), ',', round(st_ymin(w)::numeric,3), ',', round(st_xmax(w)::numeric,3), ',', round(st_ymax(w)::numeric,3)) from (select geometry(st_buffer(geography(box2d(st_collect(geometry(p)))), 1000)) as w from t_elevation) as t;" | psql -t $dbname` && rm $datadir/bigslovakia.pbf &&	osmium extract -b $bbox $datadir/carslovakia.pbf -o $datadir/bigslovakia.pbf
 	osmium fileinfo --no-progress -e $datadir/bigslovakia.pbf |grep Last| sed 's/.*: //' > /home/izsk/weby/epsilon.sk/routing/last-mod-data
+	if [ ! -s /home/izsk/weby/epsilon.sk/routing/last-mod-data ]; then
+		echo "empty bigslovakia"
+		exit;
+	fi
 }
 crop_slovakia() {
 	# mimic behaviour of download.geofabric
