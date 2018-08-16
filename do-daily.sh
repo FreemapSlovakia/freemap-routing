@@ -12,26 +12,28 @@ update_planet > /dev/null # just in case, the first one fails
 
 
 crop_bigslovakia > /dev/null
+(oma bigweby &)
 crop_slovakia > /dev/null
-cp -p $datadir/slovakia.pbf /home/izsk/bigweby/epsilon/routing
-cp -p $datadir/bigslovakia.pbf /home/izsk/bigweby/epsilon/routing
-
+#cp -p $datadir/slovakia.pbf /home/izsk/bigweby/epsilon/routing
+#cp -p $datadir/bigslovakia.pbf /home/izsk/bigweby/epsilon/routing
 
 rm $datadir/bikesharing.pbf
-osmium extract -p $datadir/bikesharing.json $datadir/planet-latest.osm.pbf -o $datadir/bikesharing.pbf
+osmium extract -p $datadir/bikesharing.json $planetdir/planet-latest.osm.pbf -o $datadir/bikesharing.pbf
 
 test_file > /dev/null
-cp $datadir/carslovakia.pbf $datadir/tmp-car/bigslovakia.pbf
-rm $datadir/tmp-bus/* $datadir/tmp-train/*
+cp $datadir/carslovakia.pbf $planetdir/tmp-car/bigslovakia.pbf
+rm $planetdir/tmp-bus/* $planetdir/tmp-train/*
 cat $osrmdir/osrm-backend/profiles/car.lua |grep -v area > $osrmdir/oma-car.lua
 upgrade_osrm car > /dev/null
 upgrade_osrm bus > /dev/null
 
-if [ -r $datadir/tmp-ski/bigslovakia.pbf ]; then rm $datadir/tmp-ski/bigslovakia.pbf; fi
+(oma bigweby &)
+
+if [ -r $planetdir/tmp-ski/bigslovakia.pbf ]; then rm $planetdir/tmp-ski/bigslovakia.pbf; fi
 out="$out,get pistes: `date`"
-osmium tags-filter $planetdir/planet-latest.osm.pbf wr/route=ski wr/piste:type wr/aerialway -o $datadir/tmp-ski/bigslovakia.pbf > /dev/null
-cp $datadir/tmp-ski/bigslovakia.pbf $datadir/tmp-nordic/bigslovakia.pbf
-ls -lh $datadir/tmp-nordic/bigslovakia.pbf
+osmium tags-filter $planetdir/planet-latest.osm.pbf wr/route=ski wr/piste:type wr/aerialway -o $planetdir/tmp-ski/bigslovakia.pbf > /dev/null
+cp $planetdir/tmp-ski/bigslovakia.pbf $planetdir/tmp-nordic/bigslovakia.pbf
+ls -lh $planetdir/tmp-nordic/bigslovakia.pbf
 
 small=10
 cat master-ski.lua | grep -v 'grep nordic' > $osrmdir/oma-ski.lua
