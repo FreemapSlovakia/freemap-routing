@@ -9,11 +9,11 @@ out=" starting:\t`date`"
 
 #download data - done by daily script
 # cca 22 hours
-postgis_import; cp $datadir/bikesharing.pbf $datadir/tmp-foot/bigslovakia.pbf; upgrade_osrm foot
+postgis_import; cp $datadir/bikesharing.pbf $planetdir/tmp-foot/bigslovakia.pbf; upgrade_osrm foot
 # probably there are new data available
 cd $SCRIPTPATH
 # cca 7.5 hours
-postgis_import; cp $datadir/bikesharing.pbf $datadir/tmp-bicycle/bigslovakia.pbf; upgrade_osrm bicycle
+postgis_import; cp $datadir/bikesharing.pbf $planetdir/tmp-bicycle/bigslovakia.pbf; upgrade_osrm bicycle
 
 out="$out,end:\t`date`"
 echo $out | sed 's/,/\n/g'
