@@ -12,7 +12,7 @@ update_planet > /dev/null # just in case, the first one fails
 
 
 crop_bigslovakia > /dev/null
-(oma bigweby &)
+#(oma bigweby &)
 crop_slovakia > /dev/null
 #cp -p $datadir/slovakia.pbf /home/izsk/bigweby/epsilon/routing
 #cp -p $datadir/bigslovakia.pbf /home/izsk/bigweby/epsilon/routing
@@ -27,7 +27,7 @@ cat $osrmdir/osrm-backend/profiles/car.lua |grep -v area > $osrmdir/oma-car.lua
 upgrade_osrm car > /dev/null
 upgrade_osrm bus > /dev/null
 
-(oma bigweby &)
+(oma bigweby epsilon/routing &)
 
 if [ -r $planetdir/tmp-ski/bigslovakia.pbf ]; then rm $planetdir/tmp-ski/bigslovakia.pbf; fi
 out="$out,get pistes: `date`"
