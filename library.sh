@@ -27,10 +27,10 @@ update_planet() {
 upgrade_remote() {
 	profile=$1;
 	# copy do live server
-    scp $planetdir/$profile/* routing.epsilon.sk:$planetdir/tmp-$profile/
+    scp -q $planetdir/$profile/* routing.epsilon.sk:$planetdir/tmp-$profile/
     if [ $? -ne 0 ]; then return 1; fi
-    scp /usr/local/bin/osrm-routed-$profile routing.epsilon.sk:
-    ssh routing.epsilon.sk "rm $planetdir/$profile/* && mv $planetdir/tmp-$profile/* $planetdir/$profile/ && cp -f ~/osrm-routed-$profile /usr/local/bin/ && killall osrm-routed-$profile";
+    scp -q /usr/local/bin/osrm-routed-$profile routing.epsilon.sk:
+    ssh -q routing.epsilon.sk "rm $planetdir/$profile/* && mv $planetdir/tmp-$profile/* $planetdir/$profile/ && cp -f ~/osrm-routed-$profile /usr/local/bin/ && killall osrm-routed-$profile";
     oma f epsilon.sk/routing
 }
 
@@ -61,7 +61,7 @@ upgrade_osrm() {
 cp *lua $osrmdir
 
 crop_bigslovakia() {
-	bbox=` echo "select concat('', round(st_xmin(w)::numeric,3), ',', round(st_ymin(w)::numeric,3), ',', round(st_xmax(w)::numeric,3), ',', round(st_ymax(w)::numeric,3)) from (select geometry(st_buffer(geography(box2d(st_collect(geometry(p)))), 255000)) as w from t_elevation) as t;" | psql -t $dbname` && rm $datadir/carslovakia.pbf && osmium extract -b $bbox $planetdir/planet-latest.osm.pbf -o $datadir/carslovakia.pbf
+	bbox=` echo "select concat('', round(st_xmin(w)::numeric,3), ',', round(st_ymin(w)::numeric,3), ',', round(st_xmax(w)::numeric,3), ',', round(st_ymax(w)::numeric,3)) from (select geometry(st_buffer(geography(box2d(st_collect(geometry(p)))), 295000)) as w from t_elevation) as t;" | psql -t $dbname` && rm $datadir/carslovakia.pbf && osmium extract -b $bbox $planetdir/planet-latest.osm.pbf -o $datadir/carslovakia.pbf
 	bbox=` echo "select concat('', round(st_xmin(w)::numeric,3), ',', round(st_ymin(w)::numeric,3), ',', round(st_xmax(w)::numeric,3), ',', round(st_ymax(w)::numeric,3)) from (select geometry(st_buffer(geography(box2d(st_collect(geometry(p)))), 1000)) as w from t_elevation) as t;" | psql -t $dbname` && rm $datadir/bigslovakia.pbf &&	osmium extract -b $bbox $datadir/carslovakia.pbf -o $datadir/bigslovakia.pbf
 	osmium fileinfo --no-progress -e $datadir/bigslovakia.pbf |grep Last| sed 's/.*: //' > /home/izsk/weby/epsilon.sk/routing/last-mod-data
 	if [ ! -s /home/izsk/weby/epsilon.sk/routing/last-mod-data ]; then
