@@ -37,7 +37,8 @@ upgrade_remote() {
 upgrade_local() {
 	profile=$1;
 	#f='bigslovakia';
-	rm $planetdir/$profile/* && mv $planetdir/tmp-$profile/*.osrm* $planetdir/$profile/ && cp -f /usr/local/bin/osrm-routed /usr/local/bin/osrm-routed-$profile && killall osrm-routed-$profile
+	a=osrm-routed-$profile
+	rm $planetdir/$profile/* && mv $planetdir/tmp-$profile/*.osrm* $planetdir/$profile/ && cp -f /usr/local/bin/osrm-routed /usr/local/bin/osrm-routed-$profile && killall ${a:0:15}
 	if [ $? -ne 0 ]; then return 1; fi
 	osmium fileinfo --no-progress -e $planetdir/tmp-$profile/$f.pbf |grep Last| sed 's/.*: //' > /home/izsk/weby/epsilon.sk/routing/last-mod-$profile && rm $planetdir/tmp-$profile/*pbf
 }
