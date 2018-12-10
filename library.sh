@@ -20,8 +20,9 @@ small=1000
 
 update_planet() {
 	cd $planetdir
+	rm tmp*pbf
 	/usr/bin/pyosmium-up-to-date -v --server https://planet.openstreetmap.org/replication/day/ planet-latest.osm.pbf
-	rm tmp*lastest*pbf
+	rm tmp*pbf
 }
 
 upgrade_remote() {
@@ -62,6 +63,7 @@ upgrade_osrm() {
 cp *lua $osrmdir
 
 crop_bigslovakia() {
+	touch $datadir/carslovakia.pbf
 	bbox=` echo "select concat('', round(st_xmin(w)::numeric,3), ',', round(st_ymin(w)::numeric,3), ',', round(st_xmax(w)::numeric,3), ',', round(st_ymax(w)::numeric,3)) from (select geometry(st_buffer(geography(box2d(st_collect(geometry(p)))), 295000)) as w from t_elevation) as t;" | psql -t $dbname` && rm $datadir/carslovakia.pbf && osmium extract -b $bbox $planetdir/planet-latest.osm.pbf -o $datadir/carslovakia.pbf
 	bbox=` echo "select concat('', round(st_xmin(w)::numeric,3), ',', round(st_ymin(w)::numeric,3), ',', round(st_xmax(w)::numeric,3), ',', round(st_ymax(w)::numeric,3)) from (select geometry(st_buffer(geography(box2d(st_collect(geometry(p)))), 1000)) as w from t_elevation) as t;" | psql -t $dbname` && rm $datadir/bigslovakia.pbf &&	osmium extract -b $bbox $datadir/carslovakia.pbf -o $datadir/bigslovakia.pbf
 	osmium fileinfo --no-progress -e $datadir/bigslovakia.pbf |grep Last| sed 's/.*: //' > /home/izsk/weby/epsilon.sk/routing/last-mod-data
