@@ -25,6 +25,7 @@ cp $datadir/carslovakia.pbf $planetdir/tmp-car/bigslovakia.pbf
 rm $planetdir/tmp-bus/* $planetdir/tmp-train/*
 cat $osrmdir/osrm-backend/profiles/car.lua |grep -v area > $osrmdir/oma-car.lua
 upgrade_osrm car > /dev/null
+rm $datadir/carslovakia.pbf
 upgrade_osrm bus > /dev/null
 
 (oma bigweby epsilon/routing &)
