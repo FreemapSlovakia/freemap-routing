@@ -1,8 +1,9 @@
 --unsafe_highway = Set { 'primary', 'primary_link', 'secondary', 'secondary_link', 'tertiary', 'tertiary_link', 'unclassified' }
 --medium_highway = Set { 'residential', 'road', 'service' }
 
-function get_from_rel(relations, way, key, value, ret)
+function get_from_rel(relations, way, key, value, ret, forward)
         -- if any of way's relation have key=value, return tag ret; else return NULL
+        if not forward then forward = 'forward'; end -- ignored at the moment
         local rel_id_list = relations:get_relations(way)
         for i, rel_id in ipairs(rel_id_list) do
                 local rel = relations:relation(rel_id);
@@ -22,7 +23,7 @@ function MyHandlers.footnames(profile,way,result,data)
   local pronunciation = way:get_value_by_key("name:pronunciation")
   local ref = way:get_value_by_key("ref")
   local exits = way:get_value_by_key("junction:ref")
-  local highway =  way:get_value_by_key("highway")
+  local highway = way:get_value_by_key("highway")
 
   if way:get_value_by_key("name:sk") and "" ~= way:get_value_by_key("name:sk") then result.name = way:get_value_by_key("name:sk")
   elseif name and "" ~= name then result.name = name
@@ -32,18 +33,25 @@ function MyHandlers.footnames(profile,way,result,data)
   elseif foot_ways[way:id()] == "yellow" then result.name= "žltú značku"
   elseif highway and highway == "track" then result.name = "lesnú cestu";
   elseif highway and highway == "path" then result.name = "lesný chodník";
+  elseif highway and highway == "steps" then
+    if way:get_value_by_key('step_count') then result.name = way:get_value_by_key('step_count').." schodov";
+    else result.name = "schody"; end
   elseif highway and highway == "footway" then result.name = "chodník";
-  elseif highway and highway == "pedestrian" then result.name = "chodník";
-  elseif highway and highway == "steps" then result.name = "schody";
+  elseif highway and highway == "pedestrian" then result.name = "pešiu zónu";
   elseif highway and highway == "cycleway" then result.name = "cyklochodník";
   elseif highway and highway == "living_street" then result.name = "obytnú cestu";
   elseif highway and profile.medium_highway[highway] then result.name = "vedlajšiu cestu";
   elseif highway and profile.unsafe_highway[highway] then result.name = "hlavnú cestu";
+  elseif way:get_value_by_key('step_count') then result.name = "{highway:"..highway..", steps:"..way:get_value_by_key('step_count').."}"
   elseif highway then result.name = "{highway:"..highway.."}"  -- if no name exists, use way type
   end
 
   if ref then
     result.ref = canonicalizeStringList(ref, ";")
+  end
+  if way:get_value_by_key('step_count') then
+--    result.name=" "..way:get_value_by_key('step_count').." schodov";
+    print (way:get_value_by_key('step_count')..highway.."steps ");
   end
 
   if pronunciation then
@@ -94,6 +102,16 @@ function MyHandlers.footclassstroller(profile,way,result,data)
         result.forward_classes['stroller'] = true; result.backward_classes['stroller'] = true;
   end
 end
+
+function MyHandlers.footclasshiking(profile,way,result,data)
+  -- add class based on color of hiking route
+  if foot_ways[way:id()] == "red" then result.forward_classes['red'] = true; result.backward_classes['red'] = true;
+  elseif foot_ways[way:id()] == "green" then result.forward_classes['green'] = true; result.backward_classes['green'] = true;
+  elseif foot_ways[way:id()] == "blue" then result.forward_classes['blue'] = true; result.backward_classes['blue'] = true;
+  elseif foot_ways[way:id()] == "yellow" then result.forward_classes['yellow'] = true; result.backward_classes['yellow'] = true;
+  end
+end
+
 
 function MyHandlers.footclassmud(profile,way,result,data)
   muddy = Set { 'ground','dirt','earth','mud' }
