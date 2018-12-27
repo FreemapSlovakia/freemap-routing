@@ -28,16 +28,18 @@ function setup()
     default_mode            = mode.walking,
     default_speed           = walking_speed,
     oneway_handling         = 'specific',     -- respect 'oneway:foot' but not 'oneway'
-    classes = Sequence {
-        'night', 'stroller', 'mud','unsafe','medium'
+    classes = Sequence { -- max 8, mud?
+        'night', 'stroller','unsafe','medium'
+	, 'red','green','blue','yellow'
     },
 
     excludable = Sequence {
         Set {'night'},
         Set {'stroller'},
-        Set {'mud'}, Set {'unsafe'}, 
-		Set {'night', 'stroller'},Set {'night','stroller','mud'},
-		Set {'stroller','unsafe'}, -- max 8
+        Set {'unsafe'},
+        Set {'unsafe', 'medium'},
+		Set {'night', 'stroller'},
+		Set {'stroller','unsafe'},
     },
 	relation_types = Sequence {
       "route", "highway", "multipolygon"
@@ -255,7 +257,8 @@ function process_way(profile, way, result, relations)
     MyHandlers.footrate,
     MyHandlers.footclassnight,
     MyHandlers.footclassstroller,
-    MyHandlers.footclassmud,
+    MyHandlers.footclasshiking,
+--    MyHandlers.footclassmud,
     MyHandlers.classunsafe2
   }
 
