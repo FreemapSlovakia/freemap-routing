@@ -1,3 +1,5 @@
+MyHandlers = {}
+
 function MyHandlers.segregated(profile,way,result,data)
   -- set speed to normal on a footway that has segregated bikelane
   if way:get_value_by_key("segregated") == "yes" and data.bicycle and profile.access_tag_whitelist[data.bicycle] then
@@ -55,4 +57,32 @@ function MyHandlers.penaltymajorroads(profile,way,result,data, relations)
 end
 
   
-
+function bicycleaccess(profile,source)
+  -- test access tags: bicycle, (vehicle=no and foot=yes=> dismount), vehicle, access
+  local bicycle = source:get_value_by_key('bicycle')
+  if bicycle and profile.access_tag_blacklist[bicycle] then
+	  return false
+  end
+  if bicycle then
+	  return true
+  end
+  local foot = source:get_value_by_key('foot')
+  local vehicle = source:get_value_by_key('vehicle')
+  if vehicle and profile.access_tag_blacklist[vehicle] and foot and not profile.access_tag_blacklist[foot] then
+	  return true
+  end
+  if vehicle and profile.access_tag_blacklist[vehicle] then
+	  return false
+  end
+  if vehicle then
+	  return true
+  end
+  local access = source:get_value_by_key('access')
+  if access and profile.access_tag_blacklist[access] then
+	  return false
+  end
+  if access then
+	  return true
+  end
+  return true
+end

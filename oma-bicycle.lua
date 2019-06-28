@@ -11,6 +11,7 @@ local limit = require("lib/maxspeed").limit
 require("segments-bicycle");
 require("route_rels");
 --require("handlers");
+require("bicycle_handlers");
 
 -- these need to be global because they are accesed externaly
 properties.max_speed_for_map_matching    = 110/3.6 -- kmph -> m/s
@@ -288,10 +289,13 @@ function way_function (way, result)
   end
 
   -- access
-  local access = find_access_tag(way, profile.access_tags_hierarchy)
-  if access and profile.access_tag_blacklist[access] then
-    return
+  if bicycleaccess(profile,way) == false then
+	  return
   end
+  --local access = find_access_tag(way, profile.access_tags_hierarchy)
+  --if access and profile.access_tag_blacklist[access] then
+  --  return
+  --end
 
   -- other tags
   local junction = way:get_value_by_key("junction")
@@ -392,8 +396,8 @@ function way_function (way, result)
       end
     end
   end
-
-  if way:get_value_by_key("segregated") == "yes" and bicycle and profile.access_tag_whitelist[bicycle] then
+  -- way:get_value_by_key("segregated") == "yes"
+  if bicycle and profile.access_tag_whitelist[bicycle] then
 	result.forward_speed = default_speed
     result.backward_speed = default_speed
     result.forward_mode = mode.cycling
@@ -491,7 +495,7 @@ function way_function (way, result)
       result.backward_rate = result.backward_rate * profile.unsafe_highway[data.highway]
     end
   end
-  if data.highway == 'cycleway' then 
+  if data.highway == 'cycleway' or (data.highway == 'path' or data.highway == 'footway')  and bicycle=='designated' then
 	if way:get_value_by_key("segregated") == "no" then
      result.forward_rate = result.forward_rate*1.2
      result.backward_rate = result.backward_rate*1.2
