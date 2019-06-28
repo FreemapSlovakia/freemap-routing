@@ -3,3 +3,8 @@ Crawl-delay: 6
 Disallow: /admin/
 Disallow: /editor/
 Disallow: /wp-admin/
+Disallow: /route/
+Disallow: /match/
+Disallow: /tile/
+Disallow: /trip/
+Disallow: /table/
