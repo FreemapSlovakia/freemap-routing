@@ -1,6 +1,6 @@
 #!/bin/bash
-while :; do osrm-routed-foot --mmap -p 5000 /home/ssd/osrm/foot/bigslovakia.osrm > /dev/null ; done  &
-while :; do osrm-routed-bicycle --mmap -p 5001 /home/ssd/osrm/bicycle/bigslovakia.osrm > /dev/null; done &
+while :; do osrm-routed-foot -p 5000 --max-matching-size=10000 /home/ssd/osrm/foot/bigslovakia.osrm > /dev/null ; done  &
+while :; do osrm-routed-bicycle -p 5001 --max-matching-size=10000 /home/ssd/osrm/bicycle/bigslovakia.osrm > /dev/null; done &
 while :; do osrm-routed-test -p 5002 /home/ssd/osrm/test/bigslovakia.osrm > /dev/null; sleep 2; done &
 while :; do osrm-routed-car --mmap -p 5003 /home/ssd/osrm/car/bigslovakia.osrm > /dev/null ; done  &
 while :; do osrm-routed-ski --mmap -p 5004 /home/ssd/osrm/ski/bigslovakia.osrm > /dev/null ; done  &
