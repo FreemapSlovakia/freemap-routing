@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ### BEGIN INIT INFO
 # Provides:          <NAME>
 # Required-Start:    $local_fs $network $named $time $syslog
@@ -34,8 +34,8 @@ stop() {
   #fi
   echo 'Stopping service…' >&2
   pkill -f osrm-daemon
-  sleep 2
-  pkill -f osrm-routed
+  sleep 4s
+  /usr/bin/pkill -f osrm-routed
   rm -f "$PIDFILE"
   kill -15 $(cat "$PIDFILE") && rm -f "$PIDFILE"
   echo 'Service stopped' >&2
