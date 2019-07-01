@@ -8,7 +8,7 @@ date
 out=" starting: `date`"
 
 update_planet > /dev/null
-update_planet > /dev/null # just in case, the first one fails
+#update_planet > /dev/null # just in case, the first one fails
 
 
 crop_bigslovakia > /dev/null
@@ -21,11 +21,11 @@ rm $datadir/bikesharing.pbf
 osmium extract -p $datadir/bikesharing.json $planetdir/planet-latest.osm.pbf -o $datadir/bikesharing.pbf
 
 test_file > /dev/null
-cp $datadir/carslovakia.pbf $planetdir/tmp-car/bigslovakia.pbf
+cp $datadir/tmp/carslovakia.pbf $planetdir/tmp-car/bigslovakia.pbf
 rm $planetdir/tmp-bus/* $planetdir/tmp-train/*
 cat $osrmdir/osrm-backend/profiles/car.lua |grep -v area > $osrmdir/oma-car.lua
-upgrade_osrm car > /dev/null
-rm $datadir/carslovakia.pbf
+upgrade_osrm car outdoor.tiles.freemap.sk > /dev/null
+rm $datadir/tmp/carslovakia.pbf
 upgrade_osrm bus > /dev/null
 
 (oma bigweby epsilon/routing &)

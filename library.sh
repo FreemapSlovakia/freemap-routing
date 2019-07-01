@@ -21,17 +21,21 @@ small=1000
 update_planet() {
 	cd $planetdir
 	rm tmp*pbf
-	/usr/bin/pyosmium-up-to-date -v --server https://planet.openstreetmap.org/replication/day/ planet-latest.osm.pbf
+	/usr/bin/pyosmium-up-to-date -v --server https://planet.openstreetmap.org/replication/hour/ planet-latest.osm.pbf
 	rm tmp*pbf
 }
 
 upgrade_remote() {
 	profile=$1;
 	# copy do live server
-    scp -q $planetdir/$profile/* routing.epsilon.sk:$planetdir/tmp-$profile/
+	if [ -z "$2" ]; then server='routing.epsilon.sk';
+	else server=$2;
+	fi
+	echo "remote $profile $server -$2-";
+    scp -q $planetdir/$profile/* $server:$planetdir/tmp-$profile/
     if [ $? -ne 0 ]; then return 1; fi
-    scp -q /usr/local/bin/osrm-routed-$profile routing.epsilon.sk:
-    ssh -q routing.epsilon.sk "rm $planetdir/$profile/* && mv $planetdir/tmp-$profile/* $planetdir/$profile/ && cp -f ~/osrm-routed-$profile /usr/local/bin/ && killall osrm-routed-$profile";
+    scp -q /usr/local/bin/osrm-routed-$profile $server:
+    ssh -q $server "rm $planetdir/$profile/* && mv $planetdir/tmp-$profile/* $planetdir/$profile/ && cp -f ~/osrm-routed-$profile /usr/local/bin/ && pkill -f osrm-routed-$profile";
     oma f epsilon.sk/routing
 }
 
@@ -39,7 +43,8 @@ upgrade_local() {
 	profile=$1;
 	#f='bigslovakia';
 	a=osrm-routed-$profile
-	rm $planetdir/$profile/* && mv $planetdir/tmp-$profile/*.osrm* $planetdir/$profile/ && cp -f /usr/local/bin/osrm-routed /usr/local/bin/osrm-routed-$profile && killall ${a:0:15}
+	rm $planetdir/$profile/* && mv $planetdir/tmp-$profile/*.osrm* $planetdir/$profile/ && cp -f /usr/local/bin/osrm-routed /usr/local/bin/osrm-routed-$profile && pkill -f $a
+	#${a:0:15}
 	if [ $? -ne 0 ]; then return 1; fi
 	osmium fileinfo --no-progress -e $planetdir/tmp-$profile/$f.pbf |grep Last| sed 's/.*: //' > /home/izsk/weby/epsilon.sk/routing/last-mod-$profile && rm $planetdir/tmp-$profile/*pbf
 }
@@ -57,15 +62,15 @@ upgrade_osrm() {
 	#stat -c %y $datadir/$profile/$f.osrm |sed 's/\..*//' > /home/izsk/weby/epsilon.sk/routing/last-mod-$profile
 	#osmium fileinfo --no-progress -e $datadir/tmp-$f.pbf |grep Last| sed 's/.*: //' > /home/izsk/weby/epsilon.sk/routing/last-mod-$profile
     #rm $datadir/tmp-$profile/*pbf
-	upgrade_remote $profile
+	upgrade_remote $profile $2
 }
 
 cp *lua $osrmdir
 
 crop_bigslovakia() {
-	touch $datadir/carslovakia.pbf
-	bbox=` echo "select concat('', round(st_xmin(w)::numeric,3), ',', round(st_ymin(w)::numeric,3), ',', round(st_xmax(w)::numeric,3), ',', round(st_ymax(w)::numeric,3)) from (select geometry(st_buffer(geography(box2d(st_collect(geometry(p)))), 295000)) as w from t_elevation) as t;" | psql -t $dbname` && rm $datadir/carslovakia.pbf && osmium extract -b $bbox $planetdir/planet-latest.osm.pbf -o $datadir/carslovakia.pbf
-	bbox=` echo "select concat('', round(st_xmin(w)::numeric,3), ',', round(st_ymin(w)::numeric,3), ',', round(st_xmax(w)::numeric,3), ',', round(st_ymax(w)::numeric,3)) from (select geometry(st_buffer(geography(box2d(st_collect(geometry(p)))), 1000)) as w from t_elevation) as t;" | psql -t $dbname` && rm $datadir/bigslovakia.pbf &&	osmium extract -b $bbox $datadir/carslovakia.pbf -o $datadir/bigslovakia.pbf
+	touch $datadir/tmp/carslovakia.pbf
+	bbox=` echo "select concat('', round(st_xmin(w)::numeric,3), ',', round(st_ymin(w)::numeric,3), ',', round(st_xmax(w)::numeric,3), ',', round(st_ymax(w)::numeric,3)) from (select geometry(st_buffer(geography(box2d(st_collect(geometry(p)))), 295000)) as w from t_elevation) as t;" | psql -t $dbname` && rm $datadir/tmp/carslovakia.pbf && osmium extract -b $bbox $planetdir/planet-latest.osm.pbf -o $datadir/tmp/carslovakia.pbf
+	bbox=` echo "select concat('', round(st_xmin(w)::numeric,3), ',', round(st_ymin(w)::numeric,3), ',', round(st_xmax(w)::numeric,3), ',', round(st_ymax(w)::numeric,3)) from (select geometry(st_buffer(geography(box2d(st_collect(geometry(p)))), 1000)) as w from t_elevation) as t;" | psql -t $dbname` && rm $datadir/bigslovakia.pbf &&	osmium extract -b $bbox $datadir/tmp/carslovakia.pbf -o $datadir/bigslovakia.pbf
 	osmium fileinfo --no-progress -e $datadir/bigslovakia.pbf |grep Last| sed 's/.*: //' > /home/izsk/weby/epsilon.sk/routing/last-mod-data
 	if [ ! -s /home/izsk/weby/epsilon.sk/routing/last-mod-data ]; then
 		echo "empty bigslovakia"
