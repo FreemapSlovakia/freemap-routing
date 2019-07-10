@@ -365,7 +365,9 @@ function way_function (way, result)
     -- essentially requires pedestrian profiling, for example foot=no mean we can't push a bike
     if foot ~= 'no' and (junction ~= "roundabout" and junction ~= "circular") then
 	  local width = tonumber(way:get_value_by_key("width"))
-	  if profile.pedestrian_speeds[data.highway] and width and width ~= "" and tonumber(width) >= 5 then
+	  if data.highway == 'steps' then
+		result.forward_speed = 2; result.backward_speed = 2
+	  elseif profile.pedestrian_speeds[data.highway] and width and width ~= "" and tonumber(width) >= 5 then
 		result.forward_speed = default_speed
         result.backward_speed = default_speed
       elseif profile.pedestrian_speeds[data.highway] then
@@ -480,7 +482,7 @@ function way_function (way, result)
   if result.forward_speed > 0 then
     -- convert from km/h to m/s
     result.forward_rate = result.forward_speed / 3.6;
-	if tonumber(maxspeed) >= 60 or tonumber(lanes) and tonumber(lanes) >= 2 or public_transport_ways[way:id()] then
+	if tonumber(maxspeed) >= 60 or tonumber(maxspeed) > 30 and tonumber(lanes) and tonumber(lanes) >= 2 or public_transport_ways[way:id()] then
 	  result.forward_rate = result.forward_rate * 0.5 end
     if profile.unsafe_highway[data.highway] then
       result.forward_rate = result.forward_rate * profile.unsafe_highway[data.highway]
@@ -489,13 +491,13 @@ function way_function (way, result)
   if result.backward_speed > 0 then
     -- convert from km/h to m/s
     result.backward_rate = result.backward_speed / 3.6;
-	if tonumber(maxspeed) >= 60 or tonumber(lanes) and tonumber(lanes) >= 2 or public_transport_ways[way:id()] then
+	if tonumber(maxspeed) >= 60 or tonumber(maxspeed) > 30 and tonumber(lanes) and tonumber(lanes) >= 2 or public_transport_ways[way:id()] then
 	  result.backward_rate = result.backward_rate * 0.5; end
     if profile.unsafe_highway[data.highway] then
       result.backward_rate = result.backward_rate * profile.unsafe_highway[data.highway]
     end
   end
-  if data.highway == 'cycleway' or (data.highway == 'path' or data.highway == 'footway')  and bicycle=='designated' then
+  if data.highway == 'cycleway' or (data.highway == 'path' or data.highway == 'footway') and bicycle=='designated' then
 	if way:get_value_by_key("segregated") == "no" then
      result.forward_rate = result.forward_rate*1.2
      result.backward_rate = result.backward_rate*1.2
