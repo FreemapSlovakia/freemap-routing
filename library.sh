@@ -32,6 +32,7 @@ upgrade_remote() {
 	else server=$2;
 	fi
 	echo "remote $profile $server -$2-";
+	ssh -q $server "mkdir -p $planetdir/$profile/; mkdir -p $planetdir/tmp-$profile/";
     scp -q $planetdir/$profile/* $server:$planetdir/tmp-$profile/
     if [ $? -ne 0 ]; then return 1; fi
     scp -q /usr/local/bin/osrm-routed-$profile $server:
@@ -53,7 +54,7 @@ upgrade_osrm() {
 	profile=$1;
 	cd $osrmdir
 	out="$out,$profile profile $f:\t`date`"
-	mkdir -p $planetdir/tmp-$profile;
+	mkdir -p $planetdir/tmp-$profile; mkdir -p $planetdir/$profile ;
 	if [ ! -r "$planetdir/tmp-$profile/$f.pbf" ]; then
 		cp $datadir/$f.pbf $planetdir/tmp-$profile/
 	fi
