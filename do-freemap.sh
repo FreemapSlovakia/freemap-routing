@@ -10,7 +10,6 @@ upgrade_remote() {
 }
 cp *lua $osrmdir
 
-
 date
 out=" starting: `date`"
 
@@ -27,10 +26,11 @@ upgrade_osrm car > /dev/null
 upgrade_osrm bus > /dev/null
 upgrade_osrm bicycle > /dev/null
 
-if [ -r $planetdir/tmp-ski/bigslovakia.pbf ]; then rm $planetdir/tmp-ski/bigslovakia.pbf; fi
+if [ -r $datadir/ski-world.pbf ]; then rm $datadir/ski-world.pbf; fi
 out="$out,get pistes: `date`"
-osmium tags-filter $planetdir/planet-latest.osm.pbf wr/route=ski wr/piste:type wr/aerialway -o $planetdir/tmp-ski/bigslovakia.pbf > /dev/null
-cp $planetdir/tmp-ski/bigslovakia.pbf $planetdir/tmp-nordic/bigslovakia.pbf
+osmium tags-filter $planetdir/planet-latest.osm.pbf wr/route=ski wr/piste:type wr/aerialway -o $datadir/ski-world.pbf > /dev/null
+cp $datadir/ski-world.pbf $planetdir/tmp-ski/bigslovakia.pbf
+cp $datadir/ski-world.pbf $planetdir/tmp-nordic/bigslovakia.pbf
 ls -lh $planetdir/tmp-nordic/bigslovakia.pbf
 
 small=10
