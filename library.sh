@@ -45,6 +45,7 @@ upgrade_local() {
 	profile=$1;
 	#f='bigslovakia';
 	a=osrm-routed-$profile
+	touch $planetdir/$profile/dummy
 	rm $planetdir/$profile/* && mv $planetdir/tmp-$profile/*.osrm* $planetdir/$profile/ && cp -f /usr/local/bin/osrm-routed /usr/local/bin/osrm-routed-$profile && pkill -f $a
 	#${a:0:15}
 	if [ $? -ne 0 ]; then return 1; fi
