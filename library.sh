@@ -80,7 +80,8 @@ crop_bigslovakia() {
 
 crop_freemap() {
 	cd $datadir
-	osmium extract -p /home/freemap/freemap-mapnik/limit.geojson $planetdir/planet-latest.osm.pbf -o bigslovakia.pbf
+	osmium extract -p /home/freemap/freemap-mapnik/limit.geojson $planetdir/planet-latest.osm.pbf -o bigslovakia2.pbf
+	mv bigslovakia2.pbf bigslovakia.pbf
 	osmium fileinfo --no-progress -e $datadir/bigslovakia.pbf |grep Last| sed 's/.*: //' > /home/freemap/routing/last-mod-data
 	if [ ! -s /home/freemap/routing/last-mod-data ]; then
 		echo "empty bigslovakia"
