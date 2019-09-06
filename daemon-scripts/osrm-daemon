@@ -7,4 +7,5 @@ while :; do osrm-routed-ski --mmap -p 5004 /home/ssd/osrm/ski/bigslovakia.osrm >
 while :; do osrm-routed-train --mmap -p 5005 /home/ssd/osrm/train/bigslovakia.osrm > /dev/null ; done  &
 while :; do osrm-routed-nordic --mmap -p 5006 /home/ssd/osrm/nordic/bigslovakia.osrm > /dev/null ; done  &
 while :; do osrm-routed-bus --mmap -p 5007 /home/ssd/osrm/bus/bigslovakia.osrm > /dev/null ; done  &
+while :; do osrm-routed-canoe --mmap -p 5008 /home/ssd/osrm/canoe/bigslovakia.osrm > /dev/null ; done &
 
