@@ -1,10 +1,12 @@
 api_version = 1
+-- cat cut_n30e000.asc |grep -v n |grep -v cell |grep -v NO > central.asc 
 
 -- Bicycle profile
 local find_access_tag = require("lib/access").find_access_tag
 local Set = require('lib/set')
 Sequence = require('lib/sequence')
 Handlers = require("lib/handlers")
+aaa = require('bicycle_handlers');
 
 local next = next       -- bind to local for speed
 local limit = require("lib/maxspeed").limit
@@ -20,6 +22,18 @@ properties.continue_straight_at_waypoint = false
 --properties.weight_name                   = 'duration'
 properties.weight_name                   = 'cyclability'
 properties.force_split_edges = true
+
+function source_function()
+ raster_source = sources:load(
+      'srtm/central.asc',
+      30,    -- lon_min
+      30+36023*0.00083333335351199,  -- lon_max
+      0,    -- lat_min
+      36024*0.00083333335351199,  -- lat_max
+      36023,    -- nrows
+      36024     -- ncols
+)
+end
 
 local default_speed = 17
 local walking_speed = 6
@@ -542,6 +556,8 @@ function way_function (way, result)
 
     -- set name, ref and pronunciation
     'handle_names',
+--	MyHandlers.incline,
+
 --    'classunsafe', 'footclassmud'
   }
 
