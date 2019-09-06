@@ -42,6 +42,12 @@ upgrade_osrm nordic > /dev/null
 small=100
 upgrade_osrm train > /dev/null
 
+# extract borders of europe
+rm $datadir/borders*.pbf
+osmium tags-filter $planetdir/planet-latest.osm.pbf r/boundary=administrative -o $datadir/borders1.pbf; 
+osmium extract $datadir/borders1.pbf -p europe.poly -o $datadir/borders.pbf
+rm $datadir/borders1.pbf
+
 out="$out,end: `date`"
 #echo $out
 echo $out | sed 's/,/\n/g'
