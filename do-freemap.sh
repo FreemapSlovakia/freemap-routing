@@ -42,6 +42,10 @@ upgrade_osrm nordic > /dev/null
 small=100
 upgrade_osrm train > /dev/null
 
+small=10
+upgrade_osrm canoe > /dev/null
+
+
 # extract borders of europe
 rm $datadir/borders*.pbf
 osmium tags-filter $planetdir/planet-latest.osm.pbf r/boundary=administrative -o $datadir/borders1.pbf; 
