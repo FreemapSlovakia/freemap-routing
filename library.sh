@@ -9,7 +9,7 @@ fi
 
 dbname='mapnik';
 prefix='osrm_osm';
-datadir='/home/izsk/bigweby/epsilon/routing'; osrmdir='/home/vseobecne/ine/osrmv5'
+datadir='/home/ssd/osrm/data'; osrmdir='/home/vseobecne/ine/osrmv5'
 #datadir='/home/freemap/routing/data'; osrmdir='/home/ssd/osrm/osrm';
 
 planetdir='/home/ssd/osrm'
@@ -49,7 +49,7 @@ upgrade_local() {
 	rm $planetdir/$profile/* && mv $planetdir/tmp-$profile/*.osrm* $planetdir/$profile/ && /bin/cp -f /usr/local/bin/osrm-routed /usr/local/bin/osrm-routed-$profile && pkill -f $a
 	#${a:0:15}
 	if [ $? -ne 0 ]; then return 1; fi
-	osmium fileinfo --no-progress -e $planetdir/tmp-$profile/$f.pbf |grep Last| sed 's/.*: //' > /home/izsk/weby/epsilon.sk/routing/last-mod-$profile && rm $planetdir/tmp-$profile/*pbf
+	osmium fileinfo --no-progress -e $planetdir/tmp-$profile/$f.pbf |grep Last| sed 's/.*: //' > $datadir/last-mod-$profile && rm $planetdir/tmp-$profile/*pbf
 }
 
 upgrade_osrm() {
@@ -71,8 +71,8 @@ crop_bigslovakia() {
 	touch $datadir/tmp/carslovakia.pbf
 	bbox=` echo "select concat('', round(st_xmin(w)::numeric,3), ',', round(st_ymin(w)::numeric,3), ',', round(st_xmax(w)::numeric,3), ',', round(st_ymax(w)::numeric,3)) from (select geometry(st_buffer(geography(box2d(st_collect(geometry(p)))), 295000)) as w from t_elevation) as t;" | psql -t $dbname` && rm $datadir/tmp/carslovakia.pbf && osmium extract -b $bbox $planetdir/planet-latest.osm.pbf -o $datadir/tmp/carslovakia.pbf
 	bbox=` echo "select concat('', round(st_xmin(w)::numeric,3), ',', round(st_ymin(w)::numeric,3), ',', round(st_xmax(w)::numeric,3), ',', round(st_ymax(w)::numeric,3)) from (select geometry(st_buffer(geography(box2d(st_collect(geometry(p)))), 1000)) as w from t_elevation) as t;" | psql -t $dbname` && rm $datadir/bigslovakia.pbf && osmium extract -b $bbox $datadir/tmp/carslovakia.pbf -o $datadir/bigslovakia.pbf
-	osmium fileinfo --no-progress -e $datadir/bigslovakia.pbf |grep Last| sed 's/.*: //' > /home/izsk/weby/epsilon.sk/routing/last-mod-data
-	if [ ! -s /home/izsk/weby/epsilon.sk/routing/last-mod-data ]; then
+	osmium fileinfo --no-progress -e $datadir/bigslovakia.pbf |grep Last| sed 's/.*: //' > $datadir/last-mod-data
+	if [ ! -s $datadir/last-mod-data ]; then
 		echo "empty bigslovakia"
 		exit;
 	fi
