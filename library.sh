@@ -60,7 +60,7 @@ upgrade_osrm() {
 	if [ ! -r "$planetdir/tmp-$profile/$f.pbf" ]; then
 		cp $datadir/$f.pbf $planetdir/tmp-$profile/
 	fi
-	osrm-extract -t 3 -p oma-$profile.lua --small-component-size $small $planetdir/tmp-$profile/$f.pbf && osrm-contract -t 3 $planetdir/tmp-$profile/$f.osrm && upgrade_local $profile
+	osrm-extract --verbosity ERROR -t 3 -p oma-$profile.lua --small-component-size $small $planetdir/tmp-$profile/$f.pbf && osrm-contract --verbosity ERROR -t 3 $planetdir/tmp-$profile/$f.osrm && upgrade_local $profile
 	if [ $? -ne 0 ]; then return 1; fi
 	upgrade_remote $profile $2
 }
