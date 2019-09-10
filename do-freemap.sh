@@ -49,7 +49,7 @@ upgrade_osrm canoe > /dev/null
 # extract borders of europe
 rm $datadir/borders*.pbf
 osmium tags-filter $planetdir/planet-latest.osm.pbf r/boundary=administrative -o $datadir/borders1.pbf; 
-osmium extract $datadir/borders1.pbf -p europe.poly -o $datadir/borders.pbf
+osmium extract $datadir/borders1.pbf -p $SCRIPTPATH/europe.poly -o $datadir/borders.pbf
 rm $datadir/borders1.pbf
 
 out="$out,end: `date`"
