@@ -137,6 +137,12 @@ function MyHandlers.classunsafe2(profile,way,result,data)
   end
 end
 
+function MyHandlers.resetspeed(profile,way,result,data)
+  -- reset forward/backward speed to be at least 1km/h
+  if result.forward_speed > 0 and result.forward_speed < 1 then result.forward_speed=1; end
+  if result.backward_speed > 0 and result.backward_speed < 1 then result.backward_speed=1; end
+end
+
 function MyHandlers.platform(profile,way,result,data)
   if data.public_transport and data.public_transport == 'platform' then
        result.forward_speed=profile.default_speed; result.backward_speed=profile.default_speed;
