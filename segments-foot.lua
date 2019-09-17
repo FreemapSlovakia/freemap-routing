@@ -25,10 +25,11 @@ function segment_function (profile, segment)
 	local row = cursor:fetch( {}, "a" )                   -- fetch first (and only) row
 	--print(segment.distance .. " " .. segment.weight)
     --print("povodne: ".. segment.distance .. " " .. segment.weight .. " " ..segment.duration)
-	if row and row.ele_first and row.ele_last then
+	if row and row.ele_first and row.ele_last and segment.distance > 2 then
 		local ele_gain = tonumber(row.ele_last) - tonumber(row.ele_first)
 		local slope = ele_gain/segment.distance
         local extra = (ele_gain*0.028 + 0.00036*ele_gain*ele_gain/(segment.distance/1000) )*60 ; -- extra in seconds due to elevation gain
+		if extra > segment.duration then extra=segment.duration; end
 		if slope > 0.01 then
 			segment.weight=segment.weight + 0.7*(extra*segment.weight/segment.duration);
         end

@@ -259,7 +259,8 @@ function process_way(profile, way, result, relations)
     MyHandlers.footclassstroller,
     MyHandlers.footclasshiking,
 --    MyHandlers.footclassmud,
-    MyHandlers.classunsafe2
+    MyHandlers.classunsafe2,
+    MyHandlers.resetspeed
   }
 
   WayHandlers.run(profile,way,result,data,handlers)
