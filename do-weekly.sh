@@ -10,7 +10,8 @@ out=" starting:\t`date`"
 #download data - done by daily script
 # cca 28 hours
 postgis_import;
-cp $datadir/bikesharing.pbf $planetdir/tmp-foot/bigslovakia.pbf; upgrade_osrm foot
+#cp $datadir/bikesharing.pbf $planetdir/tmp-foot/bigslovakia.pbf;
+upgrade_osrm foot
 # probably there are new data available
 cd $SCRIPTPATH
 # cca 9 hours
