@@ -20,7 +20,7 @@ update_planet > /dev/null
 crop_freemap > /dev/null
 crop_slovakia > /dev/null
 
-rm $planetdir/tmp-bus/* $planetdir/tmp-train/*
+rm $planetdir/tmp-*/*
 cat $osrmdir/osrm-backend/profiles/car.lua |grep -v area > $osrmdir/oma-car.lua
 upgrade_osrm car > /dev/null
 upgrade_osrm bus > /dev/null

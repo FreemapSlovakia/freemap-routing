@@ -9,8 +9,11 @@ fi
 
 dbname='mapnik';
 prefix='osrm_osm';
-datadir='/home/ssd/osrm/data'; osrmdir='/home/vseobecne/ine/osrmv5'
-#datadir='/home/freemap/routing/data'; osrmdir='/home/ssd/osrm/osrm';
+if [ `hostname` == "freemap-ng" ]; then
+	datadir='/home/freemap/routing/data'; osrmdir='/home/ssd/osrm/osrm';
+else
+	datadir='/home/ssd/osrm/data'; osrmdir='/home/vseobecne/ine/osrmv5'
+fi
 
 planetdir='/home/ssd/osrm'
 f='bigslovakia'
@@ -54,6 +57,7 @@ upgrade_local() {
 
 upgrade_osrm() {
 	profile=$1;
+	echo "doing profile $profile";
 	cd $osrmdir
 	out="$out,$profile profile $f:\t`date`"
 	mkdir -p $planetdir/tmp-$profile; mkdir -p $planetdir/$profile ;
