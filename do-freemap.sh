@@ -19,6 +19,8 @@ update_planet > /dev/null
 
 crop_freemap > /dev/null
 crop_slovakia > /dev/null
+crop_oma > /dev/null
+test_file > /dev/null
 
 rm $planetdir/tmp-*/*
 cat $osrmdir/osrm-backend/profiles/car.lua |grep -v area > $osrmdir/oma-car.lua
