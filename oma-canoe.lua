@@ -1,7 +1,9 @@
 api_version = 4
 
+Set = require('lib/set')
 Sequence = require('lib/sequence')
 Handlers = require("lib/way_handlers")
+Sequence = require('lib/sequence')
 
 
 function setup()
@@ -9,11 +11,13 @@ function setup()
     properties = {
  --     max_speed_for_map_matching      = 8/3.6, -- 180kmph -> m/s
       -- For routing based on duration, but weighted for preferring certain roads
-      },
       weight_name                     = 'routability',
+	},
 	default_mode              = mode.driving,
     default_speed             = 6,
     up_speed = 0.005,
+    relation_types = Sequence { "route" }
+
     }
 end
 
@@ -31,7 +35,7 @@ function process_way(profile, way, result, relations)
  end
  local handlers = Sequence {
 	WayHandlers.default_mode,
-    WayHandlers.names,
+    WayHandlers.names
 
  }
  WayHandlers.run(profile, way, result, data, handlers, relations)
@@ -45,5 +49,5 @@ end
 
 return {
   setup = setup,
-  process_way = process_way,
+  process_way = process_way
 }
