@@ -102,6 +102,7 @@ crop_slovakia() {
 }
 crop_oma() {
 	# crop pbf for oma.sk
+	cd $datadir
 	mv oma.pbf oma.pbf-old
 	osmium extract -p $SCRIPTPATH/oma.poly bigslovakia.pbf -o oma.pbf
 }
