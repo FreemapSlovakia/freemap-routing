@@ -100,6 +100,11 @@ crop_slovakia() {
 	mv slovakia.pbf slovakia.pbf-old
 	osmium extract -p $SCRIPTPATH/slovakia.poly bigslovakia.pbf -o slovakia.pbf
 }
+crop_oma() {
+	# crop pbf for oma.sk
+	mv oma.pbf oma.pbf-old
+	osmium extract -p $SCRIPTPATH/slovakia.poly bigslovakia.pbf -o oma.pbf
+}
 
 crop_bikesharing() {
 	cd $datadir
