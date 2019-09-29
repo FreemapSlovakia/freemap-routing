@@ -33,7 +33,6 @@ out="$out,get pistes: `date`"
 osmium tags-filter $planetdir/planet-latest.osm.pbf wr/route=ski wr/piste:type wr/aerialway -o $datadir/ski-world.pbf > /dev/null
 cp $datadir/ski-world.pbf $planetdir/tmp-ski/bigslovakia.pbf
 cp $datadir/ski-world.pbf $planetdir/tmp-nordic/bigslovakia.pbf
-ls -lh $planetdir/tmp-nordic/bigslovakia.pbf
 
 small=10
 cat master-ski.lua | grep -v 'grep nordic' > $osrmdir/oma-ski.lua
@@ -46,7 +45,6 @@ upgrade_osrm train > /dev/null
 
 small=10
 upgrade_osrm canoe > /dev/null
-
 
 # extract borders of europe
 rm $datadir/borders*.pbf
