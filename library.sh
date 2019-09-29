@@ -49,7 +49,7 @@ upgrade_local() {
 	#f='bigslovakia';
 	a=osrm-routed-$profile
 	touch $planetdir/$profile/dummy
-	rm $planetdir/$profile/* && mv $planetdir/tmp-$profile/*.osrm* $planetdir/$profile/ && /bin/cp -f /usr/local/bin/osrm-routed /usr/local/bin/osrm-routed-$profile && pkill -f $a
+	rm $planetdir/$profile/* && mv $planetdir/tmp-$profile/*.osrm* $planetdir/$profile/ && sudo -u root /usr/local/bin/osrm-upgrade-profile $profile
 	#${a:0:15}
 	if [ $? -ne 0 ]; then return 1; fi
 	osmium fileinfo --no-progress -e $planetdir/tmp-$profile/$f.pbf |grep Last| sed 's/.*: //' > $datadir/last-mod-$profile && rm $planetdir/tmp-$profile/*pbf

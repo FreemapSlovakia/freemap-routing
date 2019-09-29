@@ -1,8 +1,13 @@
 #!/bin/bash
 cd /home/vseobecne/projekty/osm/oma/odberatelia/routing/daemon-scripts
 cp -p osrm-daemon /usr/local/bin/
+cp osrm-upgrade-profile /usr/local/bin/
+chmod 755 /usr/local/bin/osrm-upgrade-profile
 cp -p osrm-daemon.sh /etc/init.d/
 update-rc.d osrm-daemon.sh defaults
+cp sudoers-routing.conf /etc/sudoers.d/
+chmod 600 /etc/sudoers.d/sudoers-routing.conf 
+
 touch /var/log/osrm_daemon.log; chown michal /var/log/osrm_daemon.log
 echo "maybe implement confing of apache.conf into your apache.configuration"
 cp www/* /home/izsk/weby/epsilon.sk/routing/
