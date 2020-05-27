@@ -24,6 +24,15 @@ function setup()
       use_turn_restrictions         = false,
       force_split_edges = true
     },
+raster_source = raster:load(
+      'srtm/central.asc',
+      30,    -- lon_min
+      30+36023*0.00083333335351199,  -- lon_max
+      0,    -- lat_min
+      36024*0.00083333335351199,  -- lat_max
+      36023,    -- nrows
+      36024     -- ncols
+),
 
     default_mode            = mode.walking,
     default_speed           = walking_speed,
@@ -216,7 +225,9 @@ function process_way(profile, way, result, relations)
   if next(data) == nil then     -- is the data table empty?
     return
   end
-
+  if data.highway == nil then
+	return
+  end
   local handlers = Sequence {
     -- set the default mode for this profile. if can be changed later
     -- in case it turns we're e.g. on a ferry
