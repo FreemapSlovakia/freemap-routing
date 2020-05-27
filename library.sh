@@ -40,6 +40,7 @@ upgrade_remote() {
     scp -q -l 2900 $planetdir/$profile/* $server:$planetdir/tmp-$profile/
     if [ $? -ne 0 ]; then return 1; fi
     scp -q /usr/local/bin/osrm-routed-$profile $server:
+    if [ $? -ne 0 ]; then return 1; fi
     ssh -q $server "rm $planetdir/$profile/* && mv $planetdir/tmp-$profile/* $planetdir/$profile/ && cp -f ~/osrm-routed-$profile /usr/local/bin/ && pkill -f osrm-routed-$profile";
     oma f epsilon.sk/routing
 }
@@ -121,7 +122,7 @@ test_file() {
 
 postgis_import() {
 	out="$out,import into postgis: `date`"
-	osm2pgsql --create --slim --latlong --style osrm.style --database $dbname --prefix $prefix $datadir/bigslovakia.pbf > /dev/null 2>&1
+	osm2pgsql --create --slim --latlong --style osrm.style --database $dbname --prefix $prefix $datadir/bigslovakia.pbf > /dev/null #2>&1
 	echo "SELECT 'vacuum analyze ' || table_name ||';' FROM information_schema.tables WHERE table_name like '${prefix}_%' limit 20" | psql -t $dbname| psql -q $dbname
 	# highways that are defined only by relation tags
 	echo "select 'route_ways={' || string_agg(distinct concat('[', parts::text, ']=\"', highway, '\"' ), ', ') || '};' from (select highway,unnest(parts) as parts from (select osm_id, highway from ${prefix}_polygon where highway is not null union select osm_id, highway from ${prefix}_line where highway is not null) as f,${prefix}_rels where osm_id*-1 = id and osm_id < 0) as t;" | psql -t $dbname > $osrmdir/route_rels.lua
@@ -130,10 +131,15 @@ postgis_import() {
 	echo "select 'foot_ways={' || string_agg(distinct concat('[', parts::text, ']=\"', colour, '\"' ), ', ') || '};' from ( select first(colour order by col2 asc) as colour, parts from (select unnest(parts) as parts, case when colour is not null then colour else 'other' end as colour, col2 from (select osm_id, colour,  case when colour='red' then 1 when colour = 'blue' then 2 when colour='green' then 3 else 4 end as col2 from ${prefix}_line where route in ('hiking','foot' )) as f,${prefix}_rels where osm_id*-1 = id and osm_id < 0) as t group by parts) as tt ;" | psql -t $dbname >> $osrmdir/route_rels.lua
 	echo "select 'public_transport_ways={'|| string_agg(distinct concat('[', parts::text, ']=true' ), ', ') || '};' from (select unnest(parts) as parts from (select osm_id from ${prefix}_line where route in ('bus','trolleybus')) as f,${prefix}_rels where osm_id*-1 = id and osm_id < 0) as t;" | psql -t $dbname >> $osrmdir/route_rels.lua
 	cp *lua $osrmdir/
-	echo "delete from ${prefix}_line where highway not in ('motorway','motorway_link','trunk','trunk_link','primary','primary_link','secondary','secondary_link', 'tertiary','tertiary_link') or \"natural\" != 'tree_row'" |psql $dbname
-	echo "delete from ${prefix}_line where highway is null and \"natural\" is null" | psql $dbname
-	echo "delete from ${prefix}_polygon where osm_id not in (select osm_id from ${prefix}_polygon where landuse in ('industrial', 'garages', 'construction','brownfield','landfill', 'quary',  'village_green','grass','meadow', 'forest', 'vineyard', 'orchard') or \"natural\" in ('wood') or leisure in ('park') )" |psql $dbname
-	vacuumdb --full -t ${prefix}_line -t ${prefix}_polygon $dbname
+	# in park
+	echo "drop table if exists ${prefix}_t_in_park; create table ${prefix}_t_in_park as select case when landuse in ('industrial', 'garages', 'construction','brownfield','landfill', 'quary') then -1 when landuse in ('village_green','grass','meadow') then 0.7 else 1 end as coef, st_makevalid(way)::geography as way from ${prefix}_polygon where landuse in ('industrial', 'garages', 'construction','brownfield','landfill', 'quary', 'village_green','grass','meadow', 'forest', 'vineyard', 'orchard') or \"natural\" in ('wood') or leisure in ('park'); " |psql $dbname
+	# major roads
+	echo "drop table if exists ${prefix}_t_major; create table ${prefix}_t_major as select case when highway in ('motorway','motorway_link','trunk','trunk_link','primary','primary_link') then 2.0 when highway in ('secondary','secondary_link', 'tertiary','tertiary_link') then 1.5 when  \"natural\" = 'tree_row' then -1.0 end as coef, way::geography as way from ${prefix}_line where highway in ('motorway','motorway_link','trunk','trunk_link','primary','primary_link','secondary','secondary_link', 'tertiary','tertiary_link') and tunnel is null or \"natural\" = 'tree_row';" |psql $dbname
+	# view places...
+	echo "drop table if exists ${prefix}_t_nature; create table ${prefix}_t_nature as select way from poi where typy && '{pramen,vodopad,jaskyna,prepadlina,vrch,sedlo,kamen,vyhlad}';" | psql $dbname
+	for t in in_park major nature; do
+        echo "create index on ${prefix}_t_$t using gist(way); analyze ${prefix}_t_$t;" |psql $dbname
+	done
 }
 
 no_srtm_data() {
