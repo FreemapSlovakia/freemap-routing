@@ -37,7 +37,7 @@ echo 'var simple = {
     "sources": {
         "osm": {
             "type": "vector",
-            "tiles": ["https://routing.epsilon.sk/tile/v1/'.$typ.'/tile({x},{y},{z}).mvt'.$exclude.'"]
+            "tiles": ["https://routing.freemap.sk/tile/v1/'.$typ.'/tile({x},{y},{z}).mvt'.$exclude.'"]
         }
     },
     "layers": [
