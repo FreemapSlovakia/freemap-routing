@@ -17,8 +17,6 @@ cd $SCRIPTPATH
 
 # if bigslovakia is big enough
 
-rm $planetdir/tmp-*/*
-
 cp $datadir/bratislava.pbf $planetdir/tmp-bus/bigslovakia.pbf
 upgrade_osrm bus
 
